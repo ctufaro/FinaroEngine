@@ -1,0 +1,17 @@
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\bin\Debug\netcoreapp2.0\xunit.runner.visualstudio.dotnetcore.testadapter.dll
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\bin\Debug\netcoreapp2.0\xunit.runner.reporters.netcoreapp10.dll
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\bin\Debug\netcoreapp2.0\xunit.runner.utility.netcoreapp10.dll
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\bin\Debug\netcoreapp2.0\FinaroEngine.Tests.deps.json
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\bin\Debug\netcoreapp2.0\FinaroEngine.Tests.runtimeconfig.json
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\bin\Debug\netcoreapp2.0\FinaroEngine.Tests.runtimeconfig.dev.json
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\bin\Debug\netcoreapp2.0\FinaroEngine.Tests.dll
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\bin\Debug\netcoreapp2.0\FinaroEngine.Tests.pdb
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\bin\Debug\netcoreapp2.0\FinaroEngine.Library.dll
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\bin\Debug\netcoreapp2.0\FinaroEngine.Library.pdb
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\obj\Debug\netcoreapp2.0\FinaroEngine.Tests.csprojResolveAssemblyReference.cache
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\obj\Debug\netcoreapp2.0\FinaroEngine.Tests.csproj.CoreCompileInputs.cache
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\obj\Debug\netcoreapp2.0\FinaroEngine.Tests.AssemblyInfoInputs.cache
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\obj\Debug\netcoreapp2.0\FinaroEngine.Tests.AssemblyInfo.cs
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\obj\Debug\netcoreapp2.0\FinaroEngine.Tests.csproj.CopyComplete
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\obj\Debug\netcoreapp2.0\FinaroEngine.Tests.dll
+C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Tests\obj\Debug\netcoreapp2.0\FinaroEngine.Tests.pdb
