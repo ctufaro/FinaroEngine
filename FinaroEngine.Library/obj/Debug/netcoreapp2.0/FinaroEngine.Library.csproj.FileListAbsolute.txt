@@ -1,8 +1,0 @@
-C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Library\bin\Debug\netcoreapp2.0\FinaroEngine.Library.deps.json
-C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Library\bin\Debug\netcoreapp2.0\FinaroEngine.Library.dll
-C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Library\bin\Debug\netcoreapp2.0\FinaroEngine.Library.pdb
-C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Library\obj\Debug\netcoreapp2.0\FinaroEngine.Library.csproj.CoreCompileInputs.cache
-C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Library\obj\Debug\netcoreapp2.0\FinaroEngine.Library.AssemblyInfoInputs.cache
-C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Library\obj\Debug\netcoreapp2.0\FinaroEngine.Library.AssemblyInfo.cs
-C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Library\obj\Debug\netcoreapp2.0\FinaroEngine.Library.dll
-C:\Users\Chris\My Projects\FinaroEngine\FinaroEngine.Library\obj\Debug\netcoreapp2.0\FinaroEngine.Library.pdb
