@@ -18,7 +18,7 @@ namespace FinaroEngine.Functions
         [FunctionName("negotiate")]
         public static SignalRConnectionInfo GetSignalRInfo(
             [HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequest req,
-            [SignalRConnectionInfo(HubName = "simplechat", UserId = "ass")] SignalRConnectionInfo connectionInfo)
+            [SignalRConnectionInfo(HubName = "simplechat")] SignalRConnectionInfo connectionInfo)
         {
             return connectionInfo;
         }
@@ -84,6 +84,11 @@ namespace FinaroEngine.Functions
             public string groupname { get; set; }
             public string recipient { get; set; }
             public bool isPrivate { get; set; }
+        }
+
+        public class Shit
+        {
+            public string ShitText { get; set; }
         }
     }
 }
