@@ -18,7 +18,7 @@ namespace FinaroEngine.Functions
         [FunctionName("negotiate")]
         public static SignalRConnectionInfo GetSignalRInfo(
             [HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequest req,
-            [SignalRConnectionInfo(HubName = "simplechat")] SignalRConnectionInfo connectionInfo)
+            [SignalRConnectionInfo(HubName = "exchange")] SignalRConnectionInfo connectionInfo)
         {
             return connectionInfo;
         }
@@ -26,7 +26,7 @@ namespace FinaroEngine.Functions
         [FunctionName("messages")]
         public static Task SendMessage(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")]HttpRequest req,
-            [SignalR(HubName = "simplechat")]IAsyncCollector<SignalRMessage> signalRMessages)
+            [SignalR(HubName = "exchange")]IAsyncCollector<SignalRMessage> signalRMessages)
         {
 
             var message = new JsonSerializer().Deserialize<ChatMessage>(new JsonTextReader(new StreamReader(req.Body)));
@@ -41,10 +41,11 @@ namespace FinaroEngine.Functions
                 });
         }
 
+        [Obsolete("Function Not Being Used")]
         [FunctionName("addToGroup")]
         public static Task AddToGroup(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")]HttpRequest req,
-            [SignalR(HubName = "simplechat")]IAsyncCollector<SignalRGroupAction> signalRGroupActions)
+            [SignalR(HubName = "exchange")]IAsyncCollector<SignalRGroupAction> signalRGroupActions)
         {
 
             var message = new JsonSerializer().Deserialize<ChatMessage>(new JsonTextReader(new StreamReader(req.Body)));
@@ -59,10 +60,11 @@ namespace FinaroEngine.Functions
                 });
         }
 
+        [Obsolete("Function Not Being Used")]
         [FunctionName("removeFromGroup")]
         public static Task RemoveFromGroup(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")]HttpRequest req,
-            [SignalR(HubName = "simplechat")]IAsyncCollector<SignalRGroupAction> signalRGroupActions)
+            [SignalR(HubName = "exchange")]IAsyncCollector<SignalRGroupAction> signalRGroupActions)
         {
 
             var message = new JsonSerializer().Deserialize<ChatMessage>(new JsonTextReader(new StreamReader(req.Body)));
