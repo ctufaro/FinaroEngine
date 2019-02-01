@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="StackExchange.Redis" Version="2.0.519" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Core" Version="4.0.5" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Jil" Version="4.0.5" />
+    <PackageReference Include="StackExchange.Redis.Extensions.MsgPack" Version="4.0.5" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="4.0.5" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Protobuf" Version="4.0.5" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Utf8Json" Version="4.0.5" />
   </ItemGroup>
 
 </Project>

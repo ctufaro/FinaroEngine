@@ -13,15 +13,15 @@ namespace FinaroEngine.xUnit
             var orderBook = new OrderBook();
 
             //Act
-            orderBook.Add(6, 40, Side.Plus, new DateTime(2018, 12, 10, 11, 0, 0));
-            orderBook.Add(6.5, 75, Side.Plus, new DateTime(2018, 12, 11, 6, 0, 0));
-            orderBook.Add(6.5, 120, Side.Plus, new DateTime(2018, 12, 11, 7, 0, 0));
-            orderBook.Add(5.5, 40, Side.Plus, new DateTime(2018, 12, 11, 12, 0, 0));
+            orderBook.Add(new SpreadData(6, 40, Side.Plus, new DateTime(2018, 12, 10, 11, 0, 0)));
+            orderBook.Add(new SpreadData(6.5, 75, Side.Plus, new DateTime(2018, 12, 11, 6, 0, 0)));
+            orderBook.Add(new SpreadData(6.5, 120, Side.Plus, new DateTime(2018, 12, 11, 7, 0, 0)));
+            orderBook.Add(new SpreadData(5.5, 40, Side.Plus, new DateTime(2018, 12, 11, 12, 0, 0)));
 
-            orderBook.Add(-5, 20, Side.Minus, new DateTime(2018, 12, 10, 9, 0, 0));
-            orderBook.Add(-4.5, 100, Side.Minus, new DateTime(2018, 12, 11, 7, 0, 0));
-            orderBook.Add(-5, 55, Side.Minus, new DateTime(2018, 12, 11, 8, 0, 0));
-            orderBook.Add(-5.5, 60, Side.Minus, new DateTime(2018, 12, 11, 10, 0, 0));
+            orderBook.Add(new SpreadData(-5, 20, Side.Minus, new DateTime(2018, 12, 10, 9, 0, 0)));
+            orderBook.Add(new SpreadData(-4.5, 100, Side.Minus, new DateTime(2018, 12, 11, 7, 0, 0)));
+            orderBook.Add(new SpreadData(-5, 55, Side.Minus, new DateTime(2018, 12, 11, 8, 0, 0)));
+            orderBook.Add(new SpreadData(-5.5, 60, Side.Minus, new DateTime(2018, 12, 11, 10, 0, 0)));
 
             //Assert
             Assert.True(orderBook.Book1.Count == 3);
@@ -55,15 +55,15 @@ namespace FinaroEngine.xUnit
             var orderBook = new OrderBook();
 
             //Act
-            orderBook.Add(6, 40, Side.Plus, new DateTime(2018, 12, 10, 11, 0, 0));
-            orderBook.Add(6.5, 75, Side.Plus, new DateTime(2018, 12, 11, 6, 0, 0));
-            orderBook.Add(6.5, 120, Side.Plus, new DateTime(2018, 12, 11, 7, 0, 0));
-            orderBook.Add(5.5, 40, Side.Plus, new DateTime(2018, 12, 11, 12, 0, 0));
+            orderBook.Add(new SpreadData(6, 40, Side.Plus, new DateTime(2018, 12, 10, 11, 0, 0)));
+            orderBook.Add(new SpreadData(6.5, 75, Side.Plus, new DateTime(2018, 12, 11, 6, 0, 0)));
+            orderBook.Add(new SpreadData(6.5, 120, Side.Plus, new DateTime(2018, 12, 11, 7, 0, 0)));
+            orderBook.Add(new SpreadData(5.5, 40, Side.Plus, new DateTime(2018, 12, 11, 12, 0, 0)));
 
-            orderBook.Add(-5, 20, Side.Minus, new DateTime(2018, 12, 10, 9, 0, 0));
-            orderBook.Add(-4.5, 100, Side.Minus, new DateTime(2018, 12, 11, 7, 0, 0));
-            orderBook.Add(-5, 55, Side.Minus, new DateTime(2018, 12, 11, 8, 0, 0));
-            orderBook.Add(-5.5, 60, Side.Minus, new DateTime(2018, 12, 11, 10, 0, 0));
+            orderBook.Add(new SpreadData(-5, 20, Side.Minus, new DateTime(2018, 12, 10, 9, 0, 0)));
+            orderBook.Add(new SpreadData(-4.5, 100, Side.Minus, new DateTime(2018, 12, 11, 7, 0, 0)));
+            orderBook.Add(new SpreadData(-5, 55, Side.Minus, new DateTime(2018, 12, 11, 8, 0, 0)));
+            orderBook.Add(new SpreadData(-5.5, 60, Side.Minus, new DateTime(2018, 12, 11, 10, 0, 0)));
 
             //Assert
             Assert.True(orderBook.Book2.Count == 3);
@@ -97,8 +97,8 @@ namespace FinaroEngine.xUnit
             var orderBook = new OrderBook();
 
             //Act
-            orderBook.Add(6.5, 40, Side.Plus, new DateTime(2018, 12, 10, 10, 0, 0));
-            orderBook.Add(-6.5, 40, Side.Minus, new DateTime(2018, 12, 10, 11, 0, 0));
+            orderBook.Add(new SpreadData(6.5, 40, Side.Plus, new DateTime(2018, 12, 10, 10, 0, 0)));
+            orderBook.Add(new SpreadData(-6.5, 40, Side.Minus, new DateTime(2018, 12, 10, 11, 0, 0)));
 
             //Assert
             Assert.True(orderBook.Book1[6.5].AllOrders[0].Spread == 6.5);
@@ -119,9 +119,9 @@ namespace FinaroEngine.xUnit
             var orderBook = new OrderBook();
 
             //Act
-            orderBook.Add(12, 123, Side.Plus, new DateTime(2018, 12, 13, 21, 33, 0));
-            orderBook.Add(-12, 123, Side.Minus, new DateTime(2018, 12, 13, 21, 34, 0));
-            orderBook.Add(-12, 123, Side.Minus, new DateTime(2018, 12, 13, 21, 35, 0));
+            orderBook.Add(new SpreadData(12, 123, Side.Plus, new DateTime(2018, 12, 13, 21, 33, 0)));
+            orderBook.Add(new SpreadData(-12, 123, Side.Minus, new DateTime(2018, 12, 13, 21, 34, 0)));
+            orderBook.Add(new SpreadData(-12, 123, Side.Minus, new DateTime(2018, 12, 13, 21, 35, 0)));
 
             //Assert
             Assert.True(orderBook.Book1[12].AllOrders[0].WagerAmount == 0);
@@ -141,10 +141,10 @@ namespace FinaroEngine.xUnit
             var orderBook = new OrderBook();
 
             //Act
-            orderBook.Add(12, 123, Side.Plus, new DateTime(2018, 12, 13, 21, 33, 0));
-            orderBook.Add(-12, 123, Side.Minus, new DateTime(2018, 12, 13, 21, 34, 0));
-            orderBook.Add(-12, 123, Side.Minus, new DateTime(2018, 12, 13, 21, 35, 0));
-            orderBook.Add(12, 123, Side.Plus, new DateTime(2018, 12, 13, 21, 36, 0));
+            orderBook.Add(new SpreadData(12, 123, Side.Plus, new DateTime(2018, 12, 13, 21, 33, 0)));
+            orderBook.Add(new SpreadData(-12, 123, Side.Minus, new DateTime(2018, 12, 13, 21, 34, 0)));
+            orderBook.Add(new SpreadData(-12, 123, Side.Minus, new DateTime(2018, 12, 13, 21, 35, 0)));
+            orderBook.Add(new SpreadData(12, 123, Side.Plus, new DateTime(2018, 12, 13, 21, 36, 0)));
 
             //Assert
             Assert.True(orderBook.Book1[12].AllOrders[0].WagerAmount == 0);
@@ -167,10 +167,10 @@ namespace FinaroEngine.xUnit
             var orderBook = new OrderBook();
 
             //Act
-            orderBook.Add(-12, 100, Side.Minus, new DateTime(2018, 12, 13, 21, 33, 0));
-            orderBook.Add(-12, 100, Side.Minus, new DateTime(2018, 12, 13, 21, 34, 0));
-            orderBook.Add(12, 200, Side.Plus, new DateTime(2018, 12, 13, 21, 35, 0));
-            orderBook.Add(-12, 100, Side.Minus, new DateTime(2018, 12, 13, 21, 34, 0));
+            orderBook.Add(new SpreadData(-12, 100, Side.Minus, new DateTime(2018, 12, 13, 21, 33, 0)));
+            orderBook.Add(new SpreadData(-12, 100, Side.Minus, new DateTime(2018, 12, 13, 21, 34, 0)));
+            orderBook.Add(new SpreadData(12, 200, Side.Plus, new DateTime(2018, 12, 13, 21, 35, 0)));
+            orderBook.Add(new SpreadData(-12, 100, Side.Minus, new DateTime(2018, 12, 13, 21, 34, 0)));
 
             //Assert
             Assert.True(orderBook.Book2[-12].AllOrders[2].WagerAmount == 100);
@@ -184,12 +184,12 @@ namespace FinaroEngine.xUnit
             var orderBook = new OrderBook();
 
             //Act            
-            orderBook.Add(-13, 100, Side.Minus, new DateTime(2018, 12, 13, 18, 34, 0));
-            orderBook.Add(-12.8, 100, Side.Minus, new DateTime(2018, 12, 13, 19, 34, 0));
-            orderBook.Add(-12.7, 100, Side.Minus, new DateTime(2018, 12, 13, 20, 34, 0));
-            orderBook.Add(-12.5, 100, Side.Minus, new DateTime(2018, 12, 13, 21, 34, 0));
-            orderBook.Add(-12.2, 100, Side.Minus, new DateTime(2018, 12, 13, 22, 34, 0));
-            orderBook.Add(12.5, 1000, Side.Plus, new DateTime(2018, 12, 13, 23, 34, 0));
+            orderBook.Add(new SpreadData(-13, 100, Side.Minus, new DateTime(2018, 12, 13, 18, 34, 0)));
+            orderBook.Add(new SpreadData(-12.8, 100, Side.Minus, new DateTime(2018, 12, 13, 19, 34, 0)));
+            orderBook.Add(new SpreadData(-12.7, 100, Side.Minus, new DateTime(2018, 12, 13, 20, 34, 0)));
+            orderBook.Add(new SpreadData(-12.5, 100, Side.Minus, new DateTime(2018, 12, 13, 21, 34, 0)));
+            orderBook.Add(new SpreadData(-12.2, 100, Side.Minus, new DateTime(2018, 12, 13, 22, 34, 0)));
+            orderBook.Add(new SpreadData(12.5, 1000, Side.Plus, new DateTime(2018, 12, 13, 23, 34, 0)));
 
             //Assert
             Assert.True(orderBook.Book1[12.5].AllOrders[0].WagerAmount == 600);
@@ -211,12 +211,12 @@ namespace FinaroEngine.xUnit
             var orderBook = new OrderBook();
 
             //Act            
-            orderBook.Add(14, 100, Side.Plus, new DateTime(2018, 12, 13, 18, 34, 0));
-            orderBook.Add(14.5, 100, Side.Plus, new DateTime(2018, 12, 13, 19, 34, 0));
-            orderBook.Add(15, 100, Side.Plus, new DateTime(2018, 12, 13, 20, 34, 0));
-            orderBook.Add(15.1, 100, Side.Plus, new DateTime(2018, 12, 13, 21, 34, 0));
-            orderBook.Add(16, 100, Side.Plus, new DateTime(2018, 12, 13, 22, 34, 0));
-            orderBook.Add(-16, 450, Side.Minus, new DateTime(2018, 12, 13, 23, 34, 0));
+            orderBook.Add(new SpreadData(14, 100, Side.Plus, new DateTime(2018, 12, 13, 18, 34, 0)));
+            orderBook.Add(new SpreadData(14.5, 100, Side.Plus, new DateTime(2018, 12, 13, 19, 34, 0)));
+            orderBook.Add(new SpreadData(15, 100, Side.Plus, new DateTime(2018, 12, 13, 20, 34, 0)));
+            orderBook.Add(new SpreadData(15.1, 100, Side.Plus, new DateTime(2018, 12, 13, 21, 34, 0)));
+            orderBook.Add(new SpreadData(16, 100, Side.Plus, new DateTime(2018, 12, 13, 22, 34, 0)));
+            orderBook.Add(new SpreadData(-16, 450, Side.Minus, new DateTime(2018, 12, 13, 23, 34, 0)));
 
             //Assert
             Assert.True(orderBook.Book1[14].AllOrders[0].WagerAmount == 0);

@@ -17,16 +17,16 @@ namespace FinaroEngine.Library
             Book2 = new SortedDictionary<double, Orders>();
         }
 
-        public void Add(double _spread, double _amount, Side _side, DateTime? _orderPlacedOn = null, string _owner = null, string _orderId = null)
+        public void Add(SpreadData spreadData)
         {
             Orders orders = null;
-            DateTime orderPlaced = (_orderPlacedOn == null) ? DateTime.Now : _orderPlacedOn.Value;
-            Order myOrder = new Order { OrderPlacedOn = orderPlaced, Spread = _spread, WagerAmount = _amount, Side = _side, Status = Status.Open, OrderId = _orderId };            
-            var whichBook = (_side == Side.Plus) ? Book1 : Book2;
+            DateTime orderPlaced = (spreadData.OrderPlacedOn == null) ? DateTime.Now : spreadData.OrderPlacedOn.Value;
+            Order myOrder = new Order { OrderPlacedOn = orderPlaced, Spread = spreadData.Spread, WagerAmount = spreadData.Amount, Side = spreadData.Side, Status = Status.Open, OrderId = spreadData.OrderId };            
+            var whichBook = (spreadData.Side == Side.Plus) ? Book1 : Book2;
 
-            if (whichBook.ContainsKey(_spread))
+            if (whichBook.ContainsKey(spreadData.Spread))
             {
-                orders = whichBook[_spread];
+                orders = whichBook[spreadData.Spread];
 
                 lock (syncLock)
                 {
@@ -40,13 +40,13 @@ namespace FinaroEngine.Library
                 lock (syncLock)
                 {
                     orders.Add(myOrder);
-                    whichBook.Add(_spread, orders);
+                    whichBook.Add(spreadData.Spread, orders);
                 }
                 
             }
 
-            Orders homeBookOrders = whichBook[_spread];
-            CheckForMatchingOrders(_side, myOrder, ref homeBookOrders);
+            Orders homeBookOrders = whichBook[spreadData.Spread];
+            CheckForMatchingOrders(spreadData.Side, myOrder, ref homeBookOrders);
         }
 
         public void CheckForMatchingOrders(Side _side, Order _myOrder, ref Orders _homeBookOrders)

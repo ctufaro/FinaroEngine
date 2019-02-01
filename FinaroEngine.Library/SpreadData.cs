@@ -6,20 +6,21 @@ namespace FinaroEngine.Library
 {
     public class SpreadData
     {
-        public string Date { get; set; }
-        public string TeamA { get; set; }
-        public string SpreadA { get; set; }
-        public string TeamB { get; set; }
-        public string SpreadB { get; set; }
-    }
+        public double Spread { get; set; }
+        public double Amount { get; set; }
+        public Side Side { get; set; }
+        public DateTime? OrderPlacedOn { get; set; }
+        public string Owner { get; set; }
+        public string OrderId { get; set; }
 
-    public class SpreadDataAll
-    {
-        public List<SpreadData> Data { get; set; }
-
-        public SpreadDataAll()
+        public SpreadData(double Spread, double Amount, Side Side, DateTime? OrderPlacedOn, string Owner = null, string OrderId = null)
         {
-            Data = new List<SpreadData>();
+            this.Spread = Spread;
+            this.Amount = Amount;
+            this.Side = Side;
+            this.OrderPlacedOn = OrderPlacedOn;
+            this.Owner = Owner;
+            this.OrderId = OrderId;
         }
     }
 }

@@ -4,9 +4,8 @@ using System.Text;
 
 namespace FinaroEngine.Library
 {
-    public interface IStorage<T>
+    interface IExchange<T>
     {
-        void Init();
-        T Insert(T item);
+        void Insert(T item);
     }
 }
