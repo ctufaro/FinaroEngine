@@ -5,12 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="StackExchange.Redis.Extensions.Core" Version="4.0.5" />
-    <PackageReference Include="StackExchange.Redis.Extensions.Jil" Version="4.0.5" />
-    <PackageReference Include="StackExchange.Redis.Extensions.MsgPack" Version="4.0.5" />
-    <PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="4.0.5" />
-    <PackageReference Include="StackExchange.Redis.Extensions.Protobuf" Version="4.0.5" />
-    <PackageReference Include="StackExchange.Redis.Extensions.Utf8Json" Version="4.0.5" />
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
 
 </Project>

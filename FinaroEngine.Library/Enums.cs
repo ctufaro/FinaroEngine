@@ -12,9 +12,17 @@ namespace FinaroEngine.Library
 
     public enum Status
     {
-        Open,
-        Partial,
-        Filled,
-        Cancelled
+        Open = 1,
+        Partial = 2,
+        Filled = 3,
+        Cancelled = 4
+    }
+
+    public enum TradeType
+    {
+        Buy = 1,
+        Sell = 2,
+        ShortSell = 3,
+        BuyToCover = 4
     }
 }
