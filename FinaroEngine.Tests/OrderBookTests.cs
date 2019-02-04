@@ -1,9 +1,65 @@
 using FinaroEngine.Library;
 using System;
+using System.Data;
 using Xunit;
 
 namespace FinaroEngine.xUnit
 {
+
+    public class OrderBookTests
+    {
+        [Fact]
+        public void Test_Orders_On_Fill_And_Partial()
+        {
+            bool update;
+            DataTable dt = GetDT(new Tuple<int, int>[] {Tuple.Create(100, 1)});
+            DataRow dr = GetDR(dt, 10, 1);
+
+            OrderProcess.MatchOrders(dr, dt, out update);
+
+            Assert.True(Convert.ToInt32(dt.Rows[0]["Quantity"]) == 90);
+            Assert.True(Convert.ToInt32(dt.Rows[0]["Status"]) == 2);
+
+            Assert.True(Convert.ToInt32(dr["Quantity"]) == 0);
+            Assert.True(Convert.ToInt32(dr["Status"]) == 3);
+        }
+
+        [Fact]
+        public void Test_Orders_On_Two_Fills()
+        {
+            bool update;
+            DataTable dt = GetDT(new Tuple<int, int>[] { Tuple.Create(100, 1) });
+            DataRow dr = GetDR(dt, 100, 1);
+            OrderProcess.MatchOrders(dr, dt, out update);
+
+            Assert.True(Convert.ToInt32(dt.Rows[0]["Quantity"]) == 0);
+            Assert.True(Convert.ToInt32(dt.Rows[0]["Status"]) == 3);
+
+            Assert.True(Convert.ToInt32(dr["Quantity"]) == 0);
+            Assert.True(Convert.ToInt32(dr["Status"]) == 3);
+        }
+
+        public DataTable GetDT(Tuple<int, int>[] values)
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Quantity", typeof(Int32));
+            dt.Columns.Add("Status", typeof(Int32));
+            foreach(Tuple<int,int> v in values)
+            {
+                dt.Rows.Add(v.Item1, v.Item2);
+            }
+            return dt;
+        }
+        public DataRow GetDR(DataTable dt, int quantity, int status)
+        {
+            DataRow dr = dt.NewRow();
+            dr["Quantity"] = quantity;
+            dr["Status"] = status;
+            return dr;
+        }
+    }
+
+    /* ARCHIVED TESTS
     public class OrderBookTests
     {
         [Fact]
@@ -233,11 +289,11 @@ namespace FinaroEngine.xUnit
             Assert.True(orderBook.Book2[-16].AllOrders[0].Status == Status.Filled);
 
         }
-
-
+        
         public bool DateCompare(DateTime dt1, string dt2)
         {
             return DateTime.Parse(dt1.ToString()) == DateTime.Parse(dt2);
         }
     }
+    */
 }

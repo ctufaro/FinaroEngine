@@ -7,7 +7,12 @@ namespace FinaroEngine.Runner
     {
         static void Main(string[] args)
         {
-            OrderProcess.ProcessNewOrder(1, 1, TradeType.Sell, 123, 100);
+            //string constring = @"Data Source=CHRIS\SQLEXPRESS;Initial Catalog=FinaroDB;persist security info=True; Integrated Security=SSPI;";
+            string constring = @"Data Source=VM-DEV-SQL\sql2014;Initial Catalog=Sandbox;persist security info=True; Integrated Security=SSPI;";
+
+            //string json = OrderProcess.AddNewOrder(1, 1, TradeType.Buy, 50, 5000);
+            string json = OrderProcess.GetNewOrders(constring, 1, 1);
+            Console.WriteLine(json);
             Console.WriteLine("Completed");
             Console.ReadLine();
         }
