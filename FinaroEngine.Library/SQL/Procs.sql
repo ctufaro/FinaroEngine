@@ -1,14 +1,14 @@
-﻿
+﻿GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 2/4/2019 12:42:47 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 2/5/2019 4:48:51 PM ******/
 DROP PROCEDURE [dbo].[spSelectOrdersForMatch]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 2/4/2019 12:42:47 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 2/5/2019 4:48:51 PM ******/
 DROP PROCEDURE [dbo].[spSelectOrders]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 2/4/2019 12:42:47 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 2/5/2019 4:48:51 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -34,12 +34,13 @@ BEGIN
     SELECT * FROM ORDERS 
 	WHERE EntityId = @ENTITYID 
 	AND [Status] < 3
+	ORDER BY TradeTypeId DESC, Price DESC, [DATE] 
 
 END
 
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 2/4/2019 12:42:47 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 2/5/2019 4:48:51 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -55,7 +56,7 @@ CREATE PROCEDURE [dbo].[spSelectOrdersForMatch]
 	-- Add the parameters for the stored procedure here
 	@ENTITYID INT,
 	@TRADETYPEID INT,
-	@PRICE DECIMAL
+	@PRICE DECIMAL(18,10)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -63,25 +64,24 @@ BEGIN
 	SET NOCOUNT ON;
 	SET ARITHABORT ON;
 
-	DECLARE @STRADETYPE INT
 	IF(@TRADETYPEID = 1) BEGIN
-		SET @STRADETYPE = 2
+		--I'M BUYING, SHOW ME THE LOWEST PRICE SALES
+		SELECT * FROM ORDERS 
+		WHERE EntityId = @ENTITYID 
+		AND TradeTypeId = 2 
+		AND [Status] < 3
+		AND Price <= @PRICE
+		ORDER BY PRICE ASC, [Date]
 	END
 	ELSE IF (@TRADETYPEID = 2) BEGIN
-		SET @STRADETYPE = 1
+		--I'M SELLING, SHOW ME THE HIGHEST PRICE BUYS
+		SELECT * FROM ORDERS 
+		WHERE EntityId = @ENTITYID 
+		AND TradeTypeId = 1 
+		AND [Status] < 3
+		AND Price >= @PRICE
+		ORDER BY PRICE DESC, [Date]
 	END
-
-    SELECT * FROM ORDERS 
-	WHERE EntityId = @ENTITYID 
-	AND TradeTypeId = @STRADETYPE 
-	AND [Status] < 3
-	AND 
-	((@TRADETYPEID = 1 AND Price <= @PRICE) 
-    OR 
-    (@TRADETYPEID = 2 AND Price >= @PRICE))
-	ORDER BY 
-	CASE WHEN @TRADETYPEID = 1 THEN Price END ASC,
-	CASE WHEN @TRADETYPEID = 2 THEN Price END DESC, [Date];
 
 END
 

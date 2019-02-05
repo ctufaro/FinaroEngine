@@ -46,7 +46,7 @@ namespace FinaroEngine.Library
 
                             sda.Update(dt);
 
-                            return JsonConvert.SerializeObject(updatedOrders);
+                            return JsonConvert.SerializeObject(new { data = updatedOrders });
                         }
                     }
                 }
@@ -66,7 +66,7 @@ namespace FinaroEngine.Library
                         using (DataTable dt = new DataTable())
                         {
                             sda.Fill(dt);
-                            return JsonConvert.SerializeObject(dt);
+                            return JsonConvert.SerializeObject(new { data = dt });
                         }
                     }
                 }
