@@ -35,6 +35,7 @@ namespace FinaroEngine.Library
                             row["Date"] = DateTime.Now;
                             row["Quantity"] = quantity;
                             row["Status"] = (int)Status.Open;
+                            row["PriceSort"] = tradeType == TradeType.Buy? price*-1: price;
 
                             bool updated;
                             DataTable updatedOrders = MatchOrders(row, dt, out updated);                         
