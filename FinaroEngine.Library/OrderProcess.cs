@@ -35,19 +35,22 @@ namespace FinaroEngine.Library
                             row["Date"] = DateTime.Now;
                             row["Quantity"] = quantity;
                             row["Status"] = (int)Status.Open;
-                            row["PriceSort"] = tradeType == TradeType.Buy? price*-1: price;
 
                             bool updated;
-                            DataTable updatedOrders = MatchOrders(row, dt, out updated);                         
+                            MarketData marketData;
+                            DataTable updatedOrders = MatchOrders(entityId, row, dt, out updated, out marketData);                         
                             
-                            sda.InsertCommand = new SqlCommandBuilder(sda).GetInsertCommand();
+                            sda.InsertCommand = new SqlCommandBuilder(sda).GetInsertCommand();             
 
                             if (updated)
+                            {
+                                UpdateMarketData(constring, marketData);
                                 sda.UpdateCommand = new SqlCommandBuilder(sda).GetUpdateCommand();
+                            }
 
-                            sda.Update(dt);
+                            sda.Update(dt);                           
 
-                            return JsonConvert.SerializeObject(new { data = updatedOrders });
+                            return JsonConvert.SerializeObject(new { market = marketData, orderbook = updatedOrders });
                         }
                     }
                 }
@@ -74,17 +77,52 @@ namespace FinaroEngine.Library
             }
         }
 
-        public static DataTable MatchOrders(DataRow newOrder, DataTable orderBook, out bool updated)
+        public static string GetMarketData(string constring, int userId, int entityId)
         {
-            bool isUpdated = false;
+            using (SqlConnection con = new SqlConnection(constring))
+            {
+                using (SqlCommand cmd = new SqlCommand("spSelectMarketData", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@ENTITYID", entityId));
+                    using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                    {
+                        using (DataTable dt = new DataTable())
+                        {
+                            sda.Fill(dt);
+                            return JsonConvert.SerializeObject(new { data = dt });
+                        }
+                    }
+                }
+            }
+        }
+
+        public static DataTable MatchOrders(int entityId, DataRow newOrder, DataTable orderBook, out bool updated, out MarketData marketData)
+        {
+            bool isUpdated = false;            
+            
             DataTable updatedOrders = orderBook.Clone();
+            marketData = new MarketData();
+            marketData.EntityId = entityId;
+            marketData.Volume = 0;
+            marketData.LastTradeTime = null;
+            marketData.LastTradePrice = null;
+            marketData.MarketPrice = null;
 
             foreach (DataRow dr in orderBook.Rows)
             {
 
                 int quant = Convert.ToInt32(dr["Quantity"]);
                 int newQuant = Convert.ToInt32(newOrder["Quantity"]);
+                marketData.LastTradeTime = Convert.ToDateTime(newOrder["Date"]);
+                marketData.LastTradePrice = Convert.ToDecimal(newOrder["Price"]); 
                 isUpdated = true;
+
+                //check if prices are equal, if so, mark this as market price
+                if(dr["Price"] == newOrder["Price"])
+                {
+                    marketData.MarketPrice = Convert.ToDecimal(dr["Price"]);
+                }
 
                 //after each pass, lets check if quantity == 0, then it's filled, break
                 if (newQuant == 0)
@@ -96,6 +134,7 @@ namespace FinaroEngine.Library
                 //new order has same amount as the first row
                 else if (newQuant == quant)
                 {
+                    marketData.Volume = marketData.Volume + quant;
                     dr["Quantity"] = 0;
                     dr["Status"] = (int)Status.Filled;                    
                     updatedOrders.ImportRow(dr);
@@ -107,6 +146,7 @@ namespace FinaroEngine.Library
                 //new order has more shares than the first row
                 else if (newQuant > quant)
                 {
+                    marketData.Volume = marketData.Volume + quant;
                     dr["Quantity"] = 0;
                     dr["Status"] = (int)Status.Filled;
                     updatedOrders.ImportRow(dr);
@@ -117,6 +157,7 @@ namespace FinaroEngine.Library
                 //new order has less shares than the first row
                 else if (newQuant < quant)
                 {
+                    marketData.Volume = marketData.Volume + newQuant;
                     dr["Quantity"] = quant - newQuant;
                     dr["Status"] = (int)Status.Partial;
                     updatedOrders.ImportRow(dr);
@@ -131,6 +172,24 @@ namespace FinaroEngine.Library
             updated = isUpdated;
             updatedOrders.ImportRow(newOrder);
             return updatedOrders;
+        }
+
+        public static void UpdateMarketData(string connectionString, MarketData marketData)
+        {
+            using (var con = new SqlConnection(connectionString))
+            {
+                using (var cmd = new SqlCommand("spInsertMarketData", con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@ENTITYID", marketData.EntityId));
+                    cmd.Parameters.Add(new SqlParameter("@VOLUME", marketData.Volume));
+                    cmd.Parameters.Add(new SqlParameter("@LASTTRADETIME", marketData.LastTradeTime));
+                    cmd.Parameters.Add(new SqlParameter("@LASTTRADEPRICE", marketData.LastTradePrice));
+                    cmd.Parameters.Add(new SqlParameter("@MARKETPRICE", marketData.MarketPrice));
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

@@ -1,16 +1,23 @@
-﻿USE [FinaroDB]
+﻿USE [Sandbox]
 GO
-/****** Object:  UserDefinedFunction [dbo].[Flip]    Script Date: 02/06/2019 01:09:53 ******/
+
+/****** Object:  UserDefinedFunction [dbo].[Flip]    Script Date: 2/8/2019 4:37:42 PM ******/
+DROP FUNCTION [dbo].[Flip]
+GO
+
+/****** Object:  UserDefinedFunction [dbo].[Flip]    Script Date: 2/8/2019 4:37:42 PM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date, ,>
 -- Description:	<Description, ,>
 -- =============================================
-ALTER FUNCTION [dbo].[Flip]
+CREATE FUNCTION [dbo].[Flip]
 (
 	-- Add the parameters for the function here
 	@TRADETYPEID INT,
@@ -34,3 +41,6 @@ BEGIN
 	RETURN @RETPRICE
 
 END
+
+GO
+

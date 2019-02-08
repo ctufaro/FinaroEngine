@@ -32,6 +32,15 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(orders);
         }
 
+        [FunctionName("getMarketData")]
+        public static IActionResult GetMarketData([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "market/{userid}/{entityid}")]HttpRequest req, TraceWriter log, int userid, int entityid)
+        {
+            log.Info("Getting market data");
+            var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
+            var orders = OrderProcess.GetMarketData(conn, userid, entityid);
+            return new OkObjectResult(orders);
+        }
+
         [FunctionName("createOrder")]
         public static Task CreateOrder([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "orders")]HttpRequest req, TraceWriter log, [SignalR(HubName = "exchange")]IAsyncCollector<SignalRMessage> signalRMessages)
         {

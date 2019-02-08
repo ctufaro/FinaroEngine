@@ -1,89 +1,27 @@
-﻿USE [FinaroDB]
+﻿USE [Sandbox]
 GO
-/****** Object:  Table [dbo].[USERS]    Script Date: 02/03/2019 09:54:34 ******/
+
+/****** Object:  Table [dbo].[MARKET_DATA]    Script Date: 2/8/2019 4:38:10 PM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
-SET ANSI_PADDING ON
-GO
-CREATE TABLE [dbo].[USERS](
+
+CREATE TABLE [dbo].[MARKET_DATA](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[UserName] [varchar](100) NULL,
- CONSTRAINT [PK_USERS] PRIMARY KEY CLUSTERED 
+	[EntityId] [int] NOT NULL,
+	[24HrVolume] [int] NOT NULL,
+	[LastTradeTime] [datetime] NOT NULL,
+	[LastTradePrice] [decimal](18, 10) NOT NULL,
+	[MarketPrice] [decimal](18, 10) NOT NULL,
+	[ChangeInPrice] [decimal](18, 10) NOT NULL,
+ CONSTRAINT [PK_MARKET_DATA] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
-SET ANSI_PADDING OFF
-GO
-/****** Object:  Table [dbo].[TRADE_TYPE]    Script Date: 02/03/2019 09:54:34 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_PADDING ON
-GO
-CREATE TABLE [dbo].[TRADE_TYPE](
-	[Id] [int] NULL,
-	[Name] [varchar](100) NULL
-) ON [PRIMARY]
-GO
-SET ANSI_PADDING OFF
-GO
-/****** Object:  Table [dbo].[ORDERS]    Script Date: 02/03/2019 09:54:34 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ORDERS](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[OrderId] [uniqueidentifier] NULL,
-	[UserId] [int] NULL,
-	[EntityId] [int] NULL,
-	[TradeTypeId] [int] NULL,
-	[Price] [decimal](18, 10) NULL,
-	[Date] [datetime] NULL,
-	[Quantity] [decimal](18, 0) NULL,
-	[Status] [int] NULL,
- CONSTRAINT [PK_ORDERS] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ORDER_STATUS]    Script Date: 02/03/2019 09:54:34 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_PADDING ON
-GO
-CREATE TABLE [dbo].[ORDER_STATUS](
-	[Id] [int] NULL,
-	[Name] [varchar](100) NULL
-) ON [PRIMARY]
-GO
-SET ANSI_PADDING OFF
-GO
-/****** Object:  Table [dbo].[ENTITIES]    Script Date: 02/03/2019 09:54:34 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_PADDING ON
-GO
-CREATE TABLE [dbo].[ENTITIES](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Name] [varchar](1000) NULL,
-	[ShortDesc] [varchar](100) NULL,
-	[LongDesc] [varchar](max) NULL,
- CONSTRAINT [PK_ENTITIES] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-SET ANSI_PADDING OFF
-GO
+
+
