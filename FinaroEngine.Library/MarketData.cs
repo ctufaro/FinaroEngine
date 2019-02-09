@@ -11,5 +11,6 @@ namespace FinaroEngine.Library
         public DateTime? LastTradeTime { get; set; }
         public decimal? LastTradePrice { get; set; }
         public decimal? MarketPrice { get; set; }
+        public decimal? ChangeInPrice { get; set; }
     }
 }

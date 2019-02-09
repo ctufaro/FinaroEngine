@@ -46,9 +46,11 @@ namespace FinaroEngine.Library
                             {
                                 UpdateMarketData(constring, marketData);
                                 sda.UpdateCommand = new SqlCommandBuilder(sda).GetUpdateCommand();
+                                marketData = marketData == null ? marketData : GetMarketDataStrong(constring, userId, entityId);
                             }
 
-                            sda.Update(dt);                           
+                            sda.Update(dt);
+                            
 
                             return JsonConvert.SerializeObject(new { market = marketData, orderbook = updatedOrders });
                         }
@@ -96,6 +98,35 @@ namespace FinaroEngine.Library
                 }
             }
         }
+
+        public static MarketData GetMarketDataStrong(string constring, int userId, int entityId)
+        {
+            using (SqlConnection con = new SqlConnection(constring))
+            {
+                using (SqlCommand cmd = new SqlCommand("spSelectMarketData", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@ENTITYID", entityId));
+                    using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                    {
+                        using (DataTable dt = new DataTable())
+                        {
+                            sda.Fill(dt);
+                            MarketData marketData = new MarketData();
+                            DataRow dr = dt.Rows[0];
+                            marketData.EntityId = entityId;
+                            marketData.LastTradePrice = Convert.ToDecimal(dr["LastTradePrice"]);
+                            marketData.LastTradeTime = Convert.ToDateTime(dr["LastTradeTime"]);
+                            marketData.MarketPrice = Convert.ToDecimal(dr["MarketPrice"]);
+                            marketData.Volume = Convert.ToInt32(dr["Volume"]);
+                            marketData.ChangeInPrice = Convert.ToDecimal(dr["ChangeInPrice"]);
+                            return marketData;
+                        }
+                    }
+                }
+            }
+        }
+
 
         public static DataTable MatchOrders(int entityId, DataRow newOrder, DataTable orderBook, out bool updated, out MarketData marketData)
         {
@@ -171,6 +202,7 @@ namespace FinaroEngine.Library
             orderBook.Rows.Add(newOrder);
             updated = isUpdated;
             updatedOrders.ImportRow(newOrder);
+            marketData = !isUpdated ? null : marketData;
             return updatedOrders;
         }
 
