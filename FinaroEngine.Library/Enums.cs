@@ -25,4 +25,18 @@ namespace FinaroEngine.Library
         ShortSell = 3,
         BuyToCover = 4
     }
+
+    public enum EntityType
+    {
+        Team = 1,
+        Player = 2
+    }
+
+    public enum EntityLeague
+    {
+        MLB = 1,
+        NFL = 2,
+        NHL = 3,
+        NBA = 4
+    }
 }
