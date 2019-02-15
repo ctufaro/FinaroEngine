@@ -127,7 +127,6 @@ namespace FinaroEngine.Library
             }
         }
 
-
         public static DataTable MatchOrders(int entityId, DataRow newOrder, DataTable orderBook, out bool updated, out MarketData marketData)
         {
             bool isUpdated = false;            
