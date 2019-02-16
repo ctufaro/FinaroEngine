@@ -10,6 +10,6 @@ namespace FinaroEngine.Library
 
         IEnumerable<Order> GetOrders(int userId, int entityId);
 
-        IEnumerable<Order> MatchOrders(int entityId, IEnumerable<Order> orderBook, Order newOrder);
+        //IEnumerable<Order> MatchOrders(int entityId, IEnumerable<Order> orderBook, Order newOrder);
     }
 }
