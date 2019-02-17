@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 
 namespace FinaroEngine.Library
@@ -7,6 +8,6 @@ namespace FinaroEngine.Library
     public class MarketOrders
     {
         public MarketData MarketData { get; set; }
-        public IList<Order> Orders { get; set; }
+        public DataTable Orders { get; set; }
     }
 }

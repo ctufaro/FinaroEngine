@@ -205,3 +205,65 @@ END
 
 GO
 
+
+USE [FinaroDB]
+GO
+
+/****** Object:  StoredProcedure [dbo].[spSelectMarketData]    Script Date: 02/17/2019 09:35:33 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spSelectMarketData]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[spSelectMarketData]
+GO
+
+USE [FinaroDB]
+GO
+
+/****** Object:  StoredProcedure [dbo].[spSelectMarketData]    Script Date: 02/17/2019 09:35:33 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[spSelectMarketData] 
+	-- Add the parameters for the stored procedure here
+	@ENTITYID INT
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	--empty table
+	IF (NOT EXISTS(SELECT TOP 1 Id FROM MARKET_DATA)) BEGIN
+		SELECT null [Volume], null [LastTradeTime], null [LastTradePrice], null [MarketPrice], null [ChangeInPrice]
+	END
+	ELSE BEGIN
+		DECLARE @RECENTDATE DATE
+		DECLARE @RECENTID INT		
+		SET @RECENTID = (SELECT MAX(Id) FROM MARKET_DATA)
+		SET @RECENTDATE = CAST((SELECT LastTradeTime FROM MARKET_DATA WHERE Id = @RECENTID) AS DATE)
+
+		--same day, return all data
+		IF @RECENTDATE = CAST(GETDATE() AS DATE) BEGIN
+			SELECT [Volume], LastTradeTime, LastTradePrice, MarketPrice, ChangeInPrice FROM MARKET_DATA
+			WHERE Id = @RECENTID
+		END
+		--different day, just return 0 volume
+		ELSE BEGIN
+			SELECT 0 [Volume], LastTradeTime, LastTradePrice, MarketPrice, ChangeInPrice FROM MARKET_DATA
+			WHERE Id = @RECENTID
+		END
+	END
+
+END
+
+
+
+
+GO
+

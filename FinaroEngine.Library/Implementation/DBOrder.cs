@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -64,7 +65,7 @@ namespace FinaroEngine.Library
 
                             sda.Update(dt);
 
-                            MarketOrders retdata = new MarketOrders { MarketData = null, Orders = null };
+                            MarketOrders retdata = new MarketOrders { MarketData = marketData, Orders = updatedOrders };
 
                             return retdata;
 

@@ -28,7 +28,8 @@ namespace FinaroEngine.Functions
         {
             log.Info("Getting all orders");
             var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
-            var orders = OrderProcess.GetNewOrders(conn, userid, entityid);
+            OrderProcess op = new OrderProcess(new Options { ConnectionString = conn }, userid, entityid);
+            var orders = op.GetNewOrders();
             return new OkObjectResult(orders);
         }
 
@@ -37,7 +38,8 @@ namespace FinaroEngine.Functions
         {
             log.Info("Getting market data");
             var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
-            var orders = OrderProcess.GetMarketData(conn, userid, entityid);
+            OrderProcess op = new OrderProcess(new Options { ConnectionString = conn }, userid, entityid);
+            var orders = op.GetMarketData();
             return new OkObjectResult(orders);
         }
 
@@ -47,7 +49,8 @@ namespace FinaroEngine.Functions
             log.Info("Creating a new order");
             var neworder = new JsonSerializer().Deserialize<Order>(new JsonTextReader(new StreamReader(req.Body)));
             var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
-            var orders = OrderProcess.AddNewOrder(conn, neworder.UserId, neworder.EntityId, (TradeType)neworder.TradeType, neworder.Price, neworder.Quantity);
+            OrderProcess op = new OrderProcess(new Options { ConnectionString = conn }, neworder.UserId, neworder.EntityId);
+            var orders = op.AddNewOrder((TradeType)neworder.TradeType, neworder.Price, neworder.Quantity);
             return signalRMessages.AddAsync(
                 new SignalRMessage
                 {
