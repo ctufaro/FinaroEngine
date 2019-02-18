@@ -43,6 +43,16 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(orders);
         }
 
+        [FunctionName("getTeamPayers")]
+        public static IActionResult GetTeamPlayers([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "teamplayers/{entitytypeid}/{entityleagueid}")]HttpRequest req, TraceWriter log, int entitytypeid, int entityleagueid)
+        {
+            log.Info("Getting Team Players");
+            var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
+            DBTeamPlayer tp = new DBTeamPlayer(new Options { ConnectionString = conn });
+            var teamPlayers = tp.GetTeamPlayers(entitytypeid, entityleagueid);
+            return new OkObjectResult(teamPlayers);
+        }
+
         [FunctionName("createOrder")]
         public static Task CreateOrder([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "orders")]HttpRequest req, TraceWriter log, [SignalR(HubName = "exchange")]IAsyncCollector<SignalRMessage> signalRMessages)
         {
