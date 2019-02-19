@@ -262,6 +262,48 @@ BEGIN
 
 END
 
+USE [FinaroDB]
+GO
+/****** Object:  StoredProcedure [dbo].[spSelectEntities]    Script Date: 02/19/2019 06:14:28 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER PROCEDURE [dbo].[spSelectEntities] 
+	-- Add the parameters for the stored procedure here
+	@ENTITYTYPEID INT,
+	@ENTITYLEAGUEID INT
+
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	SELECT [Id]
+		  ,[EntityTypeId]
+		  ,[EntityLeagueId]
+		  ,[EntityGroupRefId]
+		  ,[Name]
+		  ,[ShortDesc]
+		  ,[LongDesc]
+	FROM [FinaroDB].[dbo].[ENTITIES]
+	WHERE EntityLeagueId = @ENTITYLEAGUEID
+	AND EntityTypeId = @ENTITYTYPEID
+	
+
+END
+
+
+
+
+
 
 
 
