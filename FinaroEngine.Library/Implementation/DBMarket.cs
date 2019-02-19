@@ -27,12 +27,22 @@ namespace FinaroEngine.Library
             return new MarketData
             {
                 EntityId = entityId,
-                LastTradePrice = Convert.ToDecimal(dr["LastTradePrice"]),
-                LastTradeTime = Convert.ToDateTime(dr["LastTradeTime"]),
-                MarketPrice = Convert.ToDecimal(dr["MarketPrice"]),
-                Volume = Convert.ToInt32(dr["Volume"]),
-                ChangeInPrice = Convert.ToDecimal(dr["ChangeInPrice"])
+                LastTradePrice = dr.IsNull("LastTradePrice") ? (decimal?)null : Convert.ToDecimal(dr["LastTradePrice"]),
+                LastTradeTime = dr.IsNull("LastTradeTime") ? (DateTime?)null : Convert.ToDateTime(dr["LastTradeTime"]),
+                MarketPrice = dr.IsNull("MarketPrice") ? (decimal?)null : Convert.ToDecimal(dr["MarketPrice"]),
+                Volume = dr.IsNull("Volume") ? (int?)null : Convert.ToInt32(dr["Volume"]),
+                ChangeInPrice = dr.IsNull("ChangeInPrice") ? (decimal?)null : Convert.ToDecimal(dr["ChangeInPrice"])
             };            
+        }
+
+        public void UpdateBidsAsks(int entityId)
+        {
+            List<SqlParameter> prms = new List<SqlParameter>
+            {
+                new SqlParameter("@ENTITYID", entityId)
+            };
+
+            DBUtility.ExecuteQuery(opts.ConnectionString, "spUpdateBidsAsks", prms);
         }
 
         public void UpdateMarketData(MarketData marketData)

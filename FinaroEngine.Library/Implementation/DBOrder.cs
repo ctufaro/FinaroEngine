@@ -54,22 +54,26 @@ namespace FinaroEngine.Library
                             MarketData marketData;
                             DataTable updatedOrders = MatchOrders(entityId, row, dt, out updated, out marketData);
 
+                            //NEW ORDERS (SOME MAY ALREADY HAVE MATCHES)
                             sda.InsertCommand = new SqlCommandBuilder(sda).GetInsertCommand();
 
+                            //ORDERS NEED TO BE UPDATED
                             if (updated)
                             {
                                 dBMarket.UpdateMarketData(marketData);
                                 sda.UpdateCommand = new SqlCommandBuilder(sda).GetUpdateCommand();
                                 marketData = marketData == null ? marketData : dBMarket.GetMarketData(this.userId, this.entityId);
-                            }
+                            }                            
 
+                            //UPDATING/CREATING ORDERS
                             sda.Update(dt);
+
+                            //UPDATING BIDS AND ASKS
+                            dBMarket.UpdateBidsAsks(this.entityId);
 
                             MarketOrders retdata = new MarketOrders { MarketData = marketData, Orders = updatedOrders };
 
                             return retdata;
-
-                            //return JsonConvert.SerializeObject(new { market = marketData, orderbook = updatedOrders });
                         }
                     }
                 }
@@ -90,7 +94,7 @@ namespace FinaroEngine.Library
                 order.UserId = Convert.ToInt32(dr["UserId"]);
                 order.EntityId = Convert.ToInt32(dr["EntityId"]);
                 order.TradeTypeId = Convert.ToInt32(dr["TradeTypeId"]);
-                order.Price = Convert.ToInt32(dr["Price"]);
+                order.Price = Convert.ToDecimal(dr["Price"]);
                 order.Date = Convert.ToDateTime(dr["Date"]);
                 order.Quantity = Convert.ToInt32(dr["Quantity"]);
                 order.Status = Convert.ToInt32(dr["Status"]);

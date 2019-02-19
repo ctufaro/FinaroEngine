@@ -8,6 +8,7 @@ namespace FinaroEngine.Library
     {
         MarketData GetMarketData(int userId, int entityId);
         void UpdateMarketData(MarketData marketData);
+        void UpdateBidsAsks(int entityId);
     }
 
 }
