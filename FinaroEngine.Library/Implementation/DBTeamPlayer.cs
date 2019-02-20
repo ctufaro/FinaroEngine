@@ -23,17 +23,15 @@ namespace FinaroEngine.Library
                 new SqlParameter("@ENTITYTYPEID", entityTypeId),
                 new SqlParameter("@ENTITYLEAGUEID", entityLeagueId)
             };
-            DataTable teamPlayerTable = DBUtility.GetDataTable(opts.ConnectionString, "spSelectEntities", prms);
+            DataTable teamPlayerTable = DBUtility.GetDataTable(opts.ConnectionString, "spSelectTeamLeagueBidsAsks", prms);
             foreach (DataRow dr in teamPlayerTable.Rows)
             {
                 TeamPlayer teamPlayer = new TeamPlayer();
                 teamPlayer.Id = Convert.ToInt32(dr["Id"]);
-                teamPlayer.EntityTypeId = entityTypeId;
-                teamPlayer.EntityLeagueId = entityLeagueId;
-                teamPlayer.EntityGroupRefId = dr.IsNull("EntityGroupRefId") ? (int?)null : Convert.ToInt32(dr["EntityGroupRefId"]);
                 teamPlayer.Name = Convert.ToString(dr["Name"]);
-                teamPlayer.ShortDesc = Convert.ToString(dr["ShortDesc"]);
-                teamPlayer.LongDesc = Convert.ToString(dr["LongDesc"]);
+                teamPlayer.CurrentBid = dr.IsNull("CurrentBid") ? (decimal?)null : Convert.ToDecimal(dr["CurrentBid"]);
+                teamPlayer.CurrentAsk = dr.IsNull("CurrentAsk") ? (decimal?)null : Convert.ToDecimal(dr["CurrentAsk"]);
+                teamPlayer.LastPrice = dr.IsNull("LastPrice") ? (decimal?)null : Convert.ToDecimal(dr["LastPrice"]);
                 teamPlayers.Add(teamPlayer);
             }
             return teamPlayers;

@@ -60,20 +60,17 @@ namespace FinaroEngine.Library
                             //ORDERS NEED TO BE UPDATED
                             if (updated)
                             {
-                                dBMarket.UpdateMarketData(marketData);
                                 sda.UpdateCommand = new SqlCommandBuilder(sda).GetUpdateCommand();
-                                marketData = marketData == null ? marketData : dBMarket.GetMarketData(this.userId, this.entityId);
                             }                            
 
-                            //UPDATING/CREATING ORDERS
+                            //RUNNING NEW ORDERS AND UPDATES AGAINST DB
                             sda.Update(dt);
 
-                            //UPDATING BIDS AND ASKS
-                            dBMarket.UpdateBidsAsks(this.entityId);
+                            //UPDATE THE MARKET DATA DATABASE TABLE, RETURNING CHANGE IN PRICE + VOLUME
+                            marketData = dBMarket.UpdateMarketData(marketData);
 
-                            MarketOrders retdata = new MarketOrders { MarketData = marketData, Orders = updatedOrders };
-
-                            return retdata;
+                            //MARKET DATA AND FINAL ORDERBOOK RETURN
+                            return new MarketOrders { MarketData = marketData, Orders = updatedOrders };
                         }
                     }
                 }
@@ -105,79 +102,73 @@ namespace FinaroEngine.Library
 
         public static DataTable MatchOrders(int entityId, DataRow newOrder, DataTable orderBook, out bool updated, out MarketData marketData)
         {
-            bool isUpdated = false;
-
+            updated = false;
             DataTable updatedOrders = orderBook.Clone();
             marketData = new MarketData();
             marketData.EntityId = entityId;
             marketData.Volume = 0;
-            marketData.LastTradeTime = null;
-            marketData.LastTradePrice = null;
-            marketData.MarketPrice = null;
+            marketData.MarketPrice = null;         
 
             foreach (DataRow dr in orderBook.Rows)
             {
 
                 int quant = Convert.ToInt32(dr["Quantity"]);
                 int newQuant = Convert.ToInt32(newOrder["Quantity"]);
+                decimal price = Convert.ToDecimal(dr["Price"]);
+                decimal newPrice = Convert.ToDecimal(newOrder["Price"]);
                 marketData.LastTradeTime = Convert.ToDateTime(newOrder["Date"]);
                 marketData.LastTradePrice = Convert.ToDecimal(newOrder["Price"]);
-                isUpdated = true;
+                updated = true;
 
-                //check if prices are equal, if so, mark this as market price
-                if (dr["Price"] == newOrder["Price"])
-                {
-                    marketData.MarketPrice = Convert.ToDecimal(dr["Price"]);
-                }
-
-                //after each pass, lets check if quantity == 0, then it's filled, break
+                //AFTER EACH PASS, LETS CHECK IF QUANTITY == 0, THEN IT'S FILLED, BREAK
                 if (newQuant == 0)
                 {
                     newOrder["Status"] = (int)Status.Filled;
                     break;
                 }
 
-                //new order has same amount as the first row
+                //NEW ORDER HAS SAME AMOUNT AS THE FIRST ROW IN THE BOOK
                 else if (newQuant == quant)
-                {
-                    marketData.Volume = marketData.Volume + quant;
+                {                    
                     dr["Quantity"] = 0;
                     dr["Status"] = (int)Status.Filled;
                     updatedOrders.ImportRow(dr);
                     newOrder["Quantity"] = 0;
                     newOrder["Status"] = (int)Status.Filled;
+                    marketData.Volume = marketData.Volume + quant;
+                    marketData.MarketPrice = (price < newPrice) ? price : newPrice;
                     break;
                 }
 
-                //new order has more shares than the first row
+                //NEW ORDER HAS MORE SHARES THAN THE FIRST ROW IN THE BOOK
                 else if (newQuant > quant)
-                {
-                    marketData.Volume = marketData.Volume + quant;
+                {                    
                     dr["Quantity"] = 0;
                     dr["Status"] = (int)Status.Filled;
                     updatedOrders.ImportRow(dr);
                     newOrder["Quantity"] = newQuant - quant;
                     newOrder["Status"] = (int)Status.Partial;
+                    marketData.Volume = marketData.Volume + quant;
+                    marketData.MarketPrice = (price < newPrice) ? price : newPrice;
                 }
 
-                //new order has less shares than the first row
+                //NEW ORDER HAS LESS SHARES THAN THE FIRST ROW IN THE BOOK
                 else if (newQuant < quant)
-                {
-                    marketData.Volume = marketData.Volume + newQuant;
+                {                    
                     dr["Quantity"] = quant - newQuant;
                     dr["Status"] = (int)Status.Partial;
                     updatedOrders.ImportRow(dr);
                     newOrder["Quantity"] = 0;
                     newOrder["Status"] = (int)Status.Filled;
+                    marketData.Volume = marketData.Volume + newQuant;
+                    marketData.MarketPrice = (price < newPrice) ? price : newPrice;
                     break;
                 }
 
             }
 
             orderBook.Rows.Add(newOrder);
-            updated = isUpdated;
             updatedOrders.ImportRow(newOrder);
-            marketData = !isUpdated ? null : marketData;
             return updatedOrders;
         }
 

@@ -12,5 +12,7 @@ namespace FinaroEngine.Library
         public decimal? LastTradePrice { get; set; }
         public decimal? MarketPrice { get; set; }
         public decimal? ChangeInPrice { get; set; }
+        public decimal? CurrentBid { get; set; }
+        public decimal? CurrentAsk { get; set; }
     }
 }
