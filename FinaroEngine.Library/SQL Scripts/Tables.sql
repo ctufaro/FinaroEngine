@@ -1,6 +1,6 @@
-﻿
+﻿USE [Sandbox]
 GO
-/****** Object:  Table [dbo].[ENTITIES]    Script Date: 2/20/2019 5:01:59 PM ******/
+/****** Object:  Table [dbo].[ENTITIES]    Script Date: 2/22/2019 5:06:06 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -24,7 +24,7 @@ CREATE TABLE [dbo].[ENTITIES](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[MARKET_DATA]    Script Date: 2/20/2019 5:01:59 PM ******/
+/****** Object:  Table [dbo].[MARKET_DATA]    Script Date: 2/22/2019 5:06:07 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -34,6 +34,7 @@ CREATE TABLE [dbo].[MARKET_DATA](
 	[MarketDate] [date] NOT NULL,
 	[EntityId] [int] NOT NULL,
 	[Volume] [int] NULL,
+	[OpenPrice] [decimal](18, 10) NULL,
 	[LastTradeTime] [datetime] NULL,
 	[LastTradePrice] [decimal](18, 10) NULL,
 	[MarketPrice] [decimal](18, 10) NULL,
@@ -47,7 +48,7 @@ CREATE TABLE [dbo].[MARKET_DATA](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[ORDERS]    Script Date: 2/20/2019 5:01:59 PM ******/
+/****** Object:  Table [dbo].[ORDERS]    Script Date: 2/22/2019 5:06:07 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -317,20 +318,26 @@ GO
 SET IDENTITY_INSERT [dbo].[MARKET_DATA] ON 
 
 GO
-INSERT [dbo].[MARKET_DATA] ([Id], [MarketDate], [EntityId], [Volume], [LastTradeTime], [LastTradePrice], [MarketPrice], [ChangeInPrice], [CurrentBid], [CurrentAsk]) VALUES (8, CAST(N'2019-02-20' AS Date), 1, 1, NULL, NULL, CAST(2.0000000000 AS Decimal(18, 10)), CAST(0.0000000000 AS Decimal(18, 10)), CAST(1.0000000000 AS Decimal(18, 10)), CAST(2.0000000000 AS Decimal(18, 10)))
+INSERT [dbo].[MARKET_DATA] ([Id], [MarketDate], [EntityId], [Volume], [OpenPrice], [LastTradeTime], [LastTradePrice], [MarketPrice], [ChangeInPrice], [CurrentBid], [CurrentAsk]) VALUES (16, CAST(N'2019-02-22' AS Date), 63, 5, CAST(1.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-22T17:04:13.950' AS DateTime), CAST(2.0000000000 AS Decimal(18, 10)), CAST(2.0000000000 AS Decimal(18, 10)), CAST(1.0000000000 AS Decimal(18, 10)), NULL, CAST(2.0000000000 AS Decimal(18, 10)))
 GO
 SET IDENTITY_INSERT [dbo].[MARKET_DATA] OFF
 GO
 SET IDENTITY_INSERT [dbo].[ORDERS] ON 
 
 GO
-INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [Status]) VALUES (114, N'16bfad9e-916b-4794-8df1-b2d1343b2fd7', 1, 1, 1, CAST(1.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-20T16:15:54.690' AS DateTime), CAST(1 AS Decimal(18, 0)), 1)
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [Status]) VALUES (155, N'17367645-1007-49fb-8770-16cb074320ed', 1, 63, 1, CAST(1.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-22T17:03:13.820' AS DateTime), CAST(0 AS Decimal(18, 0)), 3)
 GO
-INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [Status]) VALUES (115, N'b05332cd-9ca1-4cca-87d1-17d4bc43708e', 1, 1, 2, CAST(2.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-20T16:16:06.047' AS DateTime), CAST(0 AS Decimal(18, 0)), 3)
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [Status]) VALUES (156, N'2623cd94-2bf5-4255-b70e-1d7676cbb7cc', 1, 63, 2, CAST(1.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-22T17:03:23.060' AS DateTime), CAST(0 AS Decimal(18, 0)), 3)
 GO
-INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [Status]) VALUES (116, N'b3422646-c0f2-4f44-b081-f07a2b8fefe5', 1, 1, 1, CAST(3.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-20T16:16:26.763' AS DateTime), CAST(0 AS Decimal(18, 0)), 3)
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [Status]) VALUES (157, N'd7b17282-3578-4fd0-9078-118f6239957d', 1, 63, 2, CAST(1.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-22T17:03:31.473' AS DateTime), CAST(0 AS Decimal(18, 0)), 3)
 GO
-INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [Status]) VALUES (117, N'edf054dc-53d4-4fbe-805e-766de60f2982', 1, 1, 2, CAST(2.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-20T16:22:19.077' AS DateTime), CAST(1 AS Decimal(18, 0)), 1)
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [Status]) VALUES (158, N'c1cd8b6d-8619-4d96-bd65-e4f03bc72a00', 1, 63, 1, CAST(2.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-22T17:03:42.397' AS DateTime), CAST(0 AS Decimal(18, 0)), 3)
+GO
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [Status]) VALUES (159, N'3e4a280f-a115-4023-9d93-8b21a0ac55ef', 1, 63, 1, CAST(2.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-22T17:03:58.427' AS DateTime), CAST(0 AS Decimal(18, 0)), 3)
+GO
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [Status]) VALUES (160, N'11b2818c-afe5-45ab-a800-67a73c801395', 1, 63, 2, CAST(2.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-22T17:04:07.477' AS DateTime), CAST(0 AS Decimal(18, 0)), 3)
+GO
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [Status]) VALUES (161, N'7bec0fb1-ab35-4225-a965-bd1a111b682f', 1, 63, 2, CAST(2.0000000000 AS Decimal(18, 10)), CAST(N'2019-02-22T17:04:13.950' AS DateTime), CAST(1 AS Decimal(18, 0)), 2)
 GO
 SET IDENTITY_INSERT [dbo].[ORDERS] OFF
 GO

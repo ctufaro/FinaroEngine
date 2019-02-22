@@ -23,7 +23,7 @@ namespace FinaroEngine.Library
                 new SqlParameter("@ENTITYTYPEID", entityTypeId),
                 new SqlParameter("@ENTITYLEAGUEID", entityLeagueId)
             };
-            DataTable teamPlayerTable = DBUtility.GetDataTable(opts.ConnectionString, "spSelectTeamLeagueBidsAsks", prms);
+            DataTable teamPlayerTable = DBUtility.GetDataTable(opts.ConnectionString, "spSelectTeamLeagueData", prms);
             foreach (DataRow dr in teamPlayerTable.Rows)
             {
                 TeamPlayer teamPlayer = new TeamPlayer();

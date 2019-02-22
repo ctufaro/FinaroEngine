@@ -9,6 +9,7 @@ namespace FinaroEngine.Library
     {
         private IOrder order;
         private IMarketData market;
+        private ITradeHistory history;
         private Options opts;
         private int userId;
         private int entityId;
@@ -17,6 +18,7 @@ namespace FinaroEngine.Library
         {
             order = new DBOrder(opts, userId, entityId);
             market = new DBMarket(opts, userId, entityId);
+            history = new DBTradeHistory(opts, userId, entityId);
             this.opts = opts;
             this.userId = userId;
             this.entityId = entityId;
@@ -38,6 +40,12 @@ namespace FinaroEngine.Library
         {
             var marketData = market.GetMarketData(this.userId, this.entityId);
             return JsonConvert.SerializeObject(marketData);
+        }
+
+        public string GetTradeHistory()
+        {
+            var tradeHistoryData = history.GetTradeHistory(this.userId, this.entityId);
+            return JsonConvert.SerializeObject(tradeHistoryData);
         }
 
     }

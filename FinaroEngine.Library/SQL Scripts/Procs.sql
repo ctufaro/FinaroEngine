@@ -1,40 +1,37 @@
 ﻿
 GO
 
-/****** Object:  StoredProcedure [dbo].[spUpdateBidsAsks]    Script Date: 2/20/2019 5:01:13 PM ******/
-DROP PROCEDURE [dbo].[spUpdateBidsAsks]
+/****** Object:  StoredProcedure [dbo].[spSelectTradeHistory]    Script Date: 2/22/2019 5:05:18 PM ******/
+DROP PROCEDURE [dbo].[spSelectTradeHistory]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectTeamLeagueBidsAsks]    Script Date: 2/20/2019 5:01:13 PM ******/
-DROP PROCEDURE [dbo].[spSelectTeamLeagueBidsAsks]
+/****** Object:  StoredProcedure [dbo].[spSelectTeamLeagueData]    Script Date: 2/22/2019 5:05:18 PM ******/
+DROP PROCEDURE [dbo].[spSelectTeamLeagueData]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 2/20/2019 5:01:13 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 2/22/2019 5:05:18 PM ******/
 DROP PROCEDURE [dbo].[spSelectOrdersForMatch]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 2/20/2019 5:01:13 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 2/22/2019 5:05:18 PM ******/
 DROP PROCEDURE [dbo].[spSelectOrders]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectMarketData]    Script Date: 2/20/2019 5:01:13 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectMarketData]    Script Date: 2/22/2019 5:05:18 PM ******/
 DROP PROCEDURE [dbo].[spSelectMarketData]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectEntities]    Script Date: 2/20/2019 5:01:13 PM ******/
-DROP PROCEDURE [dbo].[spSelectEntities]
-GO
-
-/****** Object:  StoredProcedure [dbo].[spInsertMarketData]    Script Date: 2/20/2019 5:01:13 PM ******/
+/****** Object:  StoredProcedure [dbo].[spInsertMarketData]    Script Date: 2/22/2019 5:05:18 PM ******/
 DROP PROCEDURE [dbo].[spInsertMarketData]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spInsertMarketData]    Script Date: 2/20/2019 5:01:13 PM ******/
+/****** Object:  StoredProcedure [dbo].[spInsertMarketData]    Script Date: 2/22/2019 5:05:18 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -56,27 +53,29 @@ BEGIN
     -- Insert statements for procedure here
 	DECLARE @BESTBID DECIMAL(18,10)
 	DECLARE @BESTASK DECIMAL(18,10)
+	DECLARE @OPENPRICE DECIMAL(18,10)
 	DECLARE @CMP DECIMAL(18,10)
 	DECLARE @NMP DECIMAL(18,10) 
 	DECLARE @CHANGE DECIMAL(18,10)
-
+		
+	--UPDATING CURRENTBID, CURRENTASK, OPENINGPRICE, AND CHANGE IN PRICE
 	SET @BESTBID = (SELECT MIN(PRICE) FROM ORDERS WHERE EntityId = @ENTITYID AND [Status] < 3 AND TradeTypeId = 1)
 	SET @BESTASK = (SELECT MAX(PRICE) FROM ORDERS WHERE EntityId = @ENTITYID AND [Status] < 3 AND TradeTypeId = 2)
+	SET @OPENPRICE = (SELECT TOP 1 [Price] FROM ORDERS WHERE CAST([DATE] AS DATE) = CAST(GETDATE() AS DATE) AND [STATUS] IN (2,3) AND EntityId = @ENTITYID ORDER BY [DATE])
 	SET @CMP = ISNULL((SELECT TOP 1 MarketPrice FROM MARKET_DATA WHERE EntityId = @ENTITYID ORDER BY [MarketDate] DESC),@NMP)
-	SET @NMP = ISNULL(@MARKETPRICE, @CMP)
-	
-	--CALCULATE CHANGE IN PRICE
-	IF @CMP = 0 BEGIN
+	SET @NMP = ISNULL(@MARKETPRICE, 0)	
+
+	IF ISNULL(@OPENPRICE,0) = 0 BEGIN
 		SET @CHANGE = 1
 	END
 	ELSE
-		SET @CHANGE = (@NMP - @CMP) / @CMP
+		SET @CHANGE = (@NMP - @OPENPRICE) / @OPENPRICE
 	END
 		
 	--NEW DAY, INSERT
 	IF NOT EXISTS (SELECT MarketDate FROM MARKET_DATA WHERE MarketDate = CAST(GETDATE() AS DATE) AND EntityId = @ENTITYID) BEGIN
-		INSERT INTO MARKET_DATA (MarketDate, EntityId, Volume, LastTradeTime, LastTradePrice, MarketPrice, ChangeInPrice, CurrentBid, CurrentAsk) VALUES
-		(CAST(GETDATE() AS DATE), @ENTITYID, @VOLUME, @LASTTRADETIME, @LASTTRADEPRICE, @MARKETPRICE, @CHANGE, @BESTBID, @BESTASK)
+		INSERT INTO MARKET_DATA (MarketDate, EntityId, Volume, LastTradeTime, LastTradePrice, MarketPrice, ChangeInPrice, CurrentBid, CurrentAsk, OpenPrice) VALUES
+		(CAST(GETDATE() AS DATE), @ENTITYID, @VOLUME, @LASTTRADETIME, @LASTTRADEPRICE, @MARKETPRICE, @CHANGE, @BESTBID, @BESTASK, @OPENPRICE)
 	END
 
 	--DAY EXISTS, UPDATE
@@ -84,60 +83,33 @@ BEGIN
 		DECLARE @NEWVOLUME INT
 		SET @NEWVOLUME = (SELECT [Volume] FROM MARKET_DATA WHERE MarketDate = CAST(GETDATE() AS DATE) AND EntityId = @ENTITYID) + @VOLUME
 		UPDATE MARKET_DATA SET
-		[Volume] = @NEWVOLUME, LastTradeTime = @LASTTRADETIME, LastTradePrice = @LASTTRADEPRICE, MarketPrice = @NMP, ChangeInPrice = @CHANGE,
-		CurrentBid = @BESTBID, CurrentAsk = @BESTASK
+		[Volume] = @NEWVOLUME, 
+		LastTradeTime = @LASTTRADETIME, 
+		LastTradePrice = @LASTTRADEPRICE, 
+		MarketPrice = @NMP, 
+		ChangeInPrice = @CHANGE,
+		CurrentBid = @BESTBID, 
+		CurrentAsk = @BESTASK,
+		OpenPrice = @OPENPRICE
 		WHERE MarketDate = CAST(GETDATE() AS DATE)
+		AND EntityId = @ENTITYID
 	END
 
 
-	SELECT TOP 1 * FROM MARKET_DATA WHERE MarketDate = CAST(GETDATE() AS DATE) ORDER BY MarketDate DESC
+	SELECT TOP 1 * FROM MARKET_DATA WHERE MarketDate = CAST(GETDATE() AS DATE) AND EntityId = @ENTITYID ORDER BY MarketDate DESC
+
 
 
 
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectEntities]    Script Date: 2/20/2019 5:01:13 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectMarketData]    Script Date: 2/22/2019 5:05:18 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
--- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
--- =============================================
-CREATE PROCEDURE [dbo].[spSelectEntities] 
-	-- Add the parameters for the stored procedure here
-	@ENTITYTYPEID INT,
-	@ENTITYLEAGUEID INT
-
-AS
-BEGIN
-
-	SET NOCOUNT ON;
-
-	SELECT 
-	E.Name,
-	M.CurrentBid,
-	M.CurrentAsk
-	FROM ENTITIES E
-	LEFT JOIN MARKET_DATA M ON M.EntityId = E.Id
-	WHERE EntityLeagueId = @ENTITYLEAGUEID
-	AND EntityTypeId = @ENTITYTYPEID	
-
-END
-GO
-
-/****** Object:  StoredProcedure [dbo].[spSelectMarketData]    Script Date: 2/20/2019 5:01:13 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 
 
@@ -166,10 +138,13 @@ BEGIN
 		IF @RECENTDATE = CAST(GETDATE() AS DATE) BEGIN
 			SELECT * FROM MARKET_DATA
 			WHERE MarketDate = CAST(GETDATE() AS DATE)
+			AND EntityId = @ENTITYID
 		END
 		--DIFFERENT DAY, JUST RETURN 0 VOLUME
 		ELSE BEGIN
-			SELECT TOP 1 0, LastTradeTime, LastTradePrice, MarketPrice, ChangeInPrice, CurrentBid, CurrentAsk FROM MARKET_DATA
+			SELECT TOP 1 0, LastTradeTime, LastTradePrice, MarketPrice, ChangeInPrice, CurrentBid, CurrentAsk 
+			FROM MARKET_DATA
+			WHERE EntityId = @ENTITYID
 			ORDER BY MarketDate DESC			
 		END
 	END
@@ -180,14 +155,16 @@ END
 
 
 
+
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 2/20/2019 5:01:13 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 2/22/2019 5:05:18 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -211,14 +188,16 @@ BEGIN
 
 
 
+
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 2/20/2019 5:01:13 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 2/22/2019 5:05:18 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -262,9 +241,10 @@ CREATE PROCEDURE [dbo].[spSelectOrdersForMatch]
 
 
 
+
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectTeamLeagueBidsAsks]    Script Date: 2/20/2019 5:01:13 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectTeamLeagueData]    Script Date: 2/22/2019 5:05:18 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -273,12 +253,13 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[spSelectTeamLeagueBidsAsks] 
+CREATE PROCEDURE [dbo].[spSelectTeamLeagueData] 
 	-- Add the parameters for the stored procedure here
 	@ENTITYTYPEID INT,
 	@ENTITYLEAGUEID INT
@@ -300,9 +281,10 @@ BEGIN
 	AND EntityTypeId = @ENTITYTYPEID	
 
 END
+
 GO
 
-/****** Object:  StoredProcedure [dbo].[spUpdateBidsAsks]    Script Date: 2/20/2019 5:01:13 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectTradeHistory]    Script Date: 2/22/2019 5:05:18 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -311,38 +293,31 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[spUpdateBidsAsks] 
+CREATE PROCEDURE [dbo].[spSelectTradeHistory] 
 	-- Add the parameters for the stored procedure here
-	@ENTITYID INT
+	@ENTITYID INT,
+	@USERID INT
 AS
 BEGIN
+
 	SET NOCOUNT ON;
-
-	DECLARE @BID DECIMAL(18,10)
-	DECLARE @ASK DECIMAL(18,10)
-	SET @BID = (SELECT MAX(Price) FROM ORDERS WHERE EntityId = @ENTITYID AND [Status] < 3 AND TradeTypeId = 1)
-	SET @ASK = (SELECT MIN(Price) FROM ORDERS WHERE EntityId = @ENTITYID AND [Status] < 3 AND TradeTypeId = 2)
-
-	IF (SELECT MAX(ID) FROM MARKET_DATA WHERE EntityId = @ENTITYID) IS NULL BEGIN
-		INSERT INTO MARKET_DATA (EntityId,LastTradeTime,CurrentBid,CurrentAsk) VALUES (@ENTITYID,GETDATE(), @BID, @ASK)
-	END
-	ELSE BEGIN
-		UPDATE MARKET_DATA SET
-		CurrentBid = @BID,
-		CurrentAsk = @ASK
-		WHERE EntityId = @ENTITYID
-		AND ID = (SELECT MAX(Id) FROM MARKET_DATA WHERE EntityId = @ENTITYID)
-	END
-
+	
+	SELECT * FROM ORDERS 
+	WHERE EntityId = @ENTITYID 
+	AND [Status] = 3
+	ORDER BY [Date] DESC
 END
 
 
 
-GO
 
+
+
+GO
 
