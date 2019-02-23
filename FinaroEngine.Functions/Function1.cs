@@ -43,6 +43,16 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(orders);
         }
 
+        [FunctionName("getMyOrders")]
+        public static IActionResult GetMyOrders([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "myorders/{userid}/{entityid}")]HttpRequest req, TraceWriter log, int userid, int entityid)
+        {
+            log.Info("Getting my orders");
+            var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
+            OrderProcess op = new OrderProcess(new Options { ConnectionString = conn }, userid, entityid);
+            var myOrders = op.GetMyOrders();
+            return new OkObjectResult(myOrders);
+        }
+
         [FunctionName("getMarketData")]
         public static IActionResult GetMarketData([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "market/{userid}/{entityid}")]HttpRequest req, TraceWriter log, int userid, int entityid)
         {
