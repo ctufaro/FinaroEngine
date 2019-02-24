@@ -39,6 +39,7 @@ namespace FinaroEngine.Library
                 order.Price = Convert.ToDecimal(dr["Price"]);
                 order.Date = Convert.ToDateTime(dr["Date"]);
                 order.Quantity = Convert.ToInt32(dr["Quantity"]);
+                order.UnsetQuantity = Convert.ToInt32(dr["UnsetQuantity"]);
                 order.Status = Convert.ToInt32(dr["Status"]);
                 orders.Add(order);
             }

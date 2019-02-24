@@ -1,37 +1,37 @@
 ﻿USE [FinaroDB]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectMyOrders]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectMyOrders]    Script Date: 02/24/2019 06:50:52 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spSelectMyOrders]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[spSelectMyOrders]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectTradeHistory]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectTradeHistory]    Script Date: 02/24/2019 06:50:52 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spSelectTradeHistory]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[spSelectTradeHistory]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 02/24/2019 06:50:52 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spSelectOrdersForMatch]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[spSelectOrdersForMatch]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectTeamLeagueData]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectTeamLeagueData]    Script Date: 02/24/2019 06:50:53 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spSelectTeamLeagueData]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[spSelectTeamLeagueData]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 02/24/2019 06:50:53 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spSelectOrders]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[spSelectOrders]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectMarketData]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectMarketData]    Script Date: 02/24/2019 06:50:53 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spSelectMarketData]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[spSelectMarketData]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spInsertMarketData]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spInsertMarketData]    Script Date: 02/24/2019 06:50:53 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spInsertMarketData]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[spInsertMarketData]
 GO
@@ -39,12 +39,13 @@ GO
 USE [FinaroDB]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectMyOrders]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectMyOrders]    Script Date: 02/24/2019 06:50:53 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -62,12 +63,13 @@ BEGIN
 	SELECT ORDERS.[Id]
 		  ,[OrderId]
 		  ,[UserId]
-		  ,E.Name
+		  ,UPPER(E.Name)[Name]
 		  ,[EntityId]
 		  ,[TradeTypeId]
 		  ,[Price]
 		  ,[Date]
-		  ,[Quantity]
+		  ,Quantity
+		  ,UnsetQuantity
 		  ,[Status]
 	  FROM ORDERS
 	  LEFT JOIN ENTITIES E ON E.ID = ORDERS.EntityId
@@ -79,14 +81,16 @@ BEGIN
 
 
 
+
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectTradeHistory]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectTradeHistory]    Script Date: 02/24/2019 06:50:53 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -106,7 +110,16 @@ BEGIN
 
 	SET NOCOUNT ON;
 	
-	SELECT * FROM ORDERS 
+	SELECT [Id]
+      ,[OrderId]
+      ,[UserId]
+      ,[EntityId]
+      ,[TradeTypeId]
+      ,[Price]
+      ,[Date]
+      ,[Quantity]
+      ,[UnsetQuantity]
+      ,[Status] FROM ORDERS 
 	WHERE EntityId = @ENTITYID 
 	AND [Status] = 3
 	ORDER BY [Date] DESC
@@ -118,14 +131,16 @@ END
 
 
 
+
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrdersForMatch]    Script Date: 02/24/2019 06:50:53 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -173,14 +188,16 @@ CREATE PROCEDURE [dbo].[spSelectOrdersForMatch]
 
 
 
+
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectTeamLeagueData]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectTeamLeagueData]    Script Date: 02/24/2019 06:50:53 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -215,14 +232,16 @@ BEGIN
 END
 
 
+
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectOrders]    Script Date: 02/24/2019 06:50:53 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -250,14 +269,16 @@ BEGIN
 
 
 
+
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectMarketData]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spSelectMarketData]    Script Date: 02/24/2019 06:50:53 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -307,14 +328,16 @@ END
 
 
 
+
 GO
 
-/****** Object:  StoredProcedure [dbo].[spInsertMarketData]    Script Date: 02/23/2019 10:28:44 ******/
+/****** Object:  StoredProcedure [dbo].[spInsertMarketData]    Script Date: 02/24/2019 06:50:53 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -382,6 +405,7 @@ BEGIN
 
 
 	SELECT TOP 1 * FROM MARKET_DATA WHERE MarketDate = CAST(GETDATE() AS DATE) AND EntityId = @ENTITYID ORDER BY MarketDate DESC
+
 
 
 

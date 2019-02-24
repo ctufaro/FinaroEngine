@@ -26,9 +26,9 @@ namespace FinaroEngine.Library
             this.entityId = entityId;
         }
 
-        public string AddNewOrder(TradeType tradeType, decimal price, int quantity)
+        public string AddNewOrder(TradeType tradeType, decimal price, int quantity, int unsetQuantity)
         {
-            var orders = order.AddNewOrder(new Order { TradeTypeId = (int)tradeType, Price = price, Quantity = quantity});
+            var orders = order.AddNewOrder(new Order { TradeTypeId = (int)tradeType, Price = price, Quantity = quantity, UnsetQuantity = unsetQuantity });
             return JsonConvert.SerializeObject(orders);
         }
 

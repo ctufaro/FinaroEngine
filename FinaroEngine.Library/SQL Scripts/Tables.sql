@@ -1,6 +1,6 @@
 ﻿USE [FinaroDB]
 GO
-/****** Object:  Table [dbo].[ORDERS]    Script Date: 02/23/2019 10:31:14 ******/
+/****** Object:  Table [dbo].[ORDERS]    Script Date: 02/24/2019 06:50:28 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[ORDERS](
 	[Price] [decimal](18, 10) NULL,
 	[Date] [datetime] NULL,
 	[Quantity] [decimal](18, 0) NULL,
+	[UnsetQuantity] [decimal](18, 0) NULL,
 	[Status] [int] NULL,
  CONSTRAINT [PK_ORDERS] PRIMARY KEY CLUSTERED 
 (
@@ -21,7 +22,15 @@ CREATE TABLE [dbo].[ORDERS](
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[MARKET_DATA]    Script Date: 02/23/2019 10:31:14 ******/
+SET IDENTITY_INSERT [dbo].[ORDERS] ON
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [UnsetQuantity], [Status]) VALUES (278, N'531c3ac9-21f8-4533-b46d-07ede8e59a0e', 1, 63, 1, CAST(5.0000000000 AS Decimal(18, 10)), CAST(0x0000A9FE00622775 AS DateTime), CAST(0 AS Decimal(18, 0)), CAST(1 AS Decimal(18, 0)), 3)
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [UnsetQuantity], [Status]) VALUES (279, N'257b4b04-1965-468c-aab0-8473d0c51bdc', 1, 63, 2, CAST(5.0000000000 AS Decimal(18, 10)), CAST(0x0000A9FE00623AC8 AS DateTime), CAST(0 AS Decimal(18, 0)), CAST(1 AS Decimal(18, 0)), 3)
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [UnsetQuantity], [Status]) VALUES (280, N'cc045628-77b3-49ec-957f-382c49219e2f', 1, 66, 1, CAST(5.0000000000 AS Decimal(18, 10)), CAST(0x0000A9FE00654AEC AS DateTime), CAST(0 AS Decimal(18, 0)), CAST(3 AS Decimal(18, 0)), 3)
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [UnsetQuantity], [Status]) VALUES (281, N'3fd7f38b-f8b8-4120-b696-eb4d2722c6c2', 1, 66, 1, CAST(5.0000000000 AS Decimal(18, 10)), CAST(0x0000A9FE0065525E AS DateTime), CAST(2 AS Decimal(18, 0)), CAST(3 AS Decimal(18, 0)), 2)
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [UnsetQuantity], [Status]) VALUES (282, N'a07625c7-ee29-4736-8f01-d6500f953df7', 1, 66, 2, CAST(5.0000000000 AS Decimal(18, 10)), CAST(0x0000A9FE00655820 AS DateTime), CAST(0 AS Decimal(18, 0)), CAST(3 AS Decimal(18, 0)), 3)
+INSERT [dbo].[ORDERS] ([Id], [OrderId], [UserId], [EntityId], [TradeTypeId], [Price], [Date], [Quantity], [UnsetQuantity], [Status]) VALUES (283, N'bb53c45a-d775-4be0-affc-77a75dd47c56', 1, 66, 2, CAST(3.0000000000 AS Decimal(18, 10)), CAST(0x0000A9FE006903F8 AS DateTime), CAST(0 AS Decimal(18, 0)), CAST(1 AS Decimal(18, 0)), 3)
+SET IDENTITY_INSERT [dbo].[ORDERS] OFF
+/****** Object:  Table [dbo].[MARKET_DATA]    Script Date: 02/24/2019 06:50:28 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -44,7 +53,11 @@ CREATE TABLE [dbo].[MARKET_DATA](
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ENTITIES]    Script Date: 02/23/2019 10:31:14 ******/
+SET IDENTITY_INSERT [dbo].[MARKET_DATA] ON
+INSERT [dbo].[MARKET_DATA] ([Id], [MarketDate], [EntityId], [Volume], [OpenPrice], [LastTradeTime], [LastTradePrice], [MarketPrice], [ChangeInPrice], [CurrentBid], [CurrentAsk]) VALUES (41, CAST(0x593F0B00 AS Date), 63, 1, CAST(5.0000000000 AS Decimal(18, 10)), CAST(0x0000A9FE00623AC8 AS DateTime), CAST(5.0000000000 AS Decimal(18, 10)), CAST(5.0000000000 AS Decimal(18, 10)), CAST(0.0000000000 AS Decimal(18, 10)), NULL, NULL)
+INSERT [dbo].[MARKET_DATA] ([Id], [MarketDate], [EntityId], [Volume], [OpenPrice], [LastTradeTime], [LastTradePrice], [MarketPrice], [ChangeInPrice], [CurrentBid], [CurrentAsk]) VALUES (42, CAST(0x593F0B00 AS Date), 66, 4, CAST(5.0000000000 AS Decimal(18, 10)), CAST(0x0000A9FE006903F8 AS DateTime), CAST(3.0000000000 AS Decimal(18, 10)), CAST(3.0000000000 AS Decimal(18, 10)), CAST(-0.4000000000 AS Decimal(18, 10)), CAST(5.0000000000 AS Decimal(18, 10)), NULL)
+SET IDENTITY_INSERT [dbo].[MARKET_DATA] OFF
+/****** Object:  Table [dbo].[ENTITIES]    Script Date: 02/24/2019 06:50:28 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON

@@ -80,7 +80,7 @@ namespace FinaroEngine.Functions
             var neworder = new JsonSerializer().Deserialize<Order>(new JsonTextReader(new StreamReader(req.Body)));
             var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
             OrderProcess op = new OrderProcess(new Options { ConnectionString = conn }, neworder.UserId, neworder.EntityId);
-            var orders = op.AddNewOrder((TradeType)neworder.TradeType, neworder.Price, neworder.Quantity);
+            var orders = op.AddNewOrder((TradeType)neworder.TradeType, neworder.Price, neworder.Quantity, neworder.UnsetQuantity);
             return signalRMessages.AddAsync(
                 new SignalRMessage
                 {
@@ -171,6 +171,7 @@ namespace FinaroEngine.Functions
             public int TradeType { get; set; }
             public Decimal Price { get; set; }
             public int Quantity { get; set; }
+            public int UnsetQuantity { get; set; }
         }
     }
 }

@@ -15,6 +15,7 @@ namespace FinaroEngine.Library
         public decimal Price { get; set; }
         public DateTime Date { get; set; }
         public int Quantity { get; set; }
+        public int UnsetQuantity { get; set; }
         public int Status { get; set; }
     }
 }
