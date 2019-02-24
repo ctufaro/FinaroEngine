@@ -73,7 +73,7 @@ BEGIN
 		  ,[Status]
 	  FROM ORDERS
 	  LEFT JOIN ENTITIES E ON E.ID = ORDERS.EntityId
-	  WHERE @USERID = 1
+	  WHERE [UserId] = @USERID
 
 	END
 
