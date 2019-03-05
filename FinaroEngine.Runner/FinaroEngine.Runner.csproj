@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Nethereum.Contracts" Version="3.0.0" />
+    <PackageReference Include="Nethereum.Web3" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FinaroEngine.Library\FinaroEngine.Library.csproj" />
   </ItemGroup>
 
