@@ -39,4 +39,10 @@ namespace FinaroEngine.Library
         NHL = 3,
         NBA = 4
     }
+
+    public class RopstenAccount
+    {
+        public const string Chris = "0xD64c013d4676F832D9BC69b4D65412dF6a393a76";
+        public const string Mark = "0x8E86638C68BB5342F281D96f772f1447A40425D5";
+    }
 }

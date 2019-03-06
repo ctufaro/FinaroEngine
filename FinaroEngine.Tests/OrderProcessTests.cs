@@ -3,7 +3,7 @@ using System;
 using System.Data;
 using Xunit;
 
-namespace FinaroEngine.xUnit
+namespace FinaroEngine.Tests
 {
 
     public class OrderProcessTests
@@ -11,8 +11,7 @@ namespace FinaroEngine.xUnit
         private Options opts = new Options {
             ConnectionString = @"Data Source=CHRIS\SQLEXPRESS;Initial Catalog=FinaroDB;persist security info=True; Integrated Security=SSPI;"
         };
-
-        [Fact]
+        
         public void Test()
         {
             OrderProcess orderProcess = new OrderProcess(opts, 1, 1);
