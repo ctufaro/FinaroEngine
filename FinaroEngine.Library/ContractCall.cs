@@ -23,12 +23,12 @@ namespace FinaroEngine.Library
             this.ABI = abi;
         }
 
-        public async Task<int> GetUserBalanceAsync(string address)
+        public async Task<double> GetUserBalanceAsync(string address)
         {
             Web3 web3 = new Web3(this.URL);
             Contract swayContract = web3.Eth.GetContract(this.ABI, this.Address);
             int balance = (int)await swayContract.GetFunction("balanceOf").CallAsync<BigInteger>(address);
-            return balance/100;
+            return (double)balance/100;
         }
 
         public async Task<int> GetTotalSupplyAsync()
@@ -39,7 +39,7 @@ namespace FinaroEngine.Library
             return balance / 100;
         }
 
-        public async Task<string> GetContractAddress()
+        public async Task<string> GetContractAddressAsync()
         {
             Web3 web3 = new Web3(this.URL);
             Contract swayContract = web3.Eth.GetContract(this.ABI, this.Address);

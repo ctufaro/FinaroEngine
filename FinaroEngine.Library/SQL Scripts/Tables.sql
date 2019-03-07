@@ -1,5 +1,38 @@
 ﻿USE [FinaroDB]
 GO
+/****** Object:  Table [dbo].[USERS]    Script Date: 3/7/2019 10:48:26 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[USERS](
+	[Id] [int] NOT NULL,
+	[Name] [varchar](1000) NULL,
+	[Username] [varchar](500) NULL,
+	[Password] [varchar](500) NULL,
+	[PublicKey] [varchar](500) NULL,
+	[PrivateKey] [varchar](500) NULL,
+ CONSTRAINT [PK_USERS] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+INSERT [dbo].[USERS] ([Id], [Name], [Username], [Password], [PublicKey], [PrivateKey]) VALUES (1, N'Chris Tufaro', N'ctufaro', N'password', N'0xD64c013d4676F832D9BC69b4D65412dF6a393a76', N'f8281af2930298fd28938669ac1368f06f310ef2ba33b80a84ca9c879ce2201a
+')
+GO
+INSERT [dbo].[USERS] ([Id], [Name], [Username], [Password], [PublicKey], [PrivateKey]) VALUES (2, N'Mark Finn', N'mfinn', N'password', N'0x8E86638C68BB5342F281D96f772f1447A40425D5', N'addc8ebc3a5d97e7d12f2cdd8c9ca0d5746261c3fd1389ba479670d84de72a00
+')
+GO
+INSERT [dbo].[USERS] ([Id], [Name], [Username], [Password], [PublicKey], [PrivateKey]) VALUES (3, N'Sway Admin', N'swadmin', N'password', N'0x7D55aE48bC74b9047bb836488e54E06eF19Db74c
+', N'466aa69475dd2bed841db861f9bf36d94ba3f8852195317e54718efda22978e8
+')
+GO
 /****** Object:  Table [dbo].[ORDERS]    Script Date: 02/24/2019 06:50:28 ******/
 SET ANSI_NULLS ON
 GO

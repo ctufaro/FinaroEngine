@@ -41,7 +41,7 @@ namespace FinaroEngine.Tests
         public async Task RetrieveContractAddressOfContractOwner()
         {
             ContractCall contractCall = new ContractCall(url, contractAddress, abi);
-            var result = await contractCall.GetContractAddress();
+            var result = await contractCall.GetContractAddressAsync();
             Assert.Equal("0x08564660169a2559492ef1315fd2fbd17bf84d54", result);            
         }
 
