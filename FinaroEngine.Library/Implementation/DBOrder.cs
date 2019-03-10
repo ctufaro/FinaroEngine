@@ -67,6 +67,21 @@ namespace FinaroEngine.Library
                             //RUNNING NEW ORDERS AND UPDATES AGAINST DB
                             sda.Update(dt);
 
+                            //TODO: show user unit ownership per entity
+
+                            //MOVING MONEY INTO ETHER CONTRACT(SWAY ADMIN) OR SELLERS ACCOUNTS
+                            //ON AN OPEN ORDER:
+                            ////BUY - MOVE QUANTITY * PRICE INTO CONTRACT(SWAY ADMIN)
+                            ////SELL - DO NOTHING
+                            //ON A FILLED/PARTIAL ORDER:
+                            ////BUY - CHECK IF USER'S MONEY IS ALREADY IN THE CONTRACT(SWAY ADMIN) VIA ORDERID
+                            ////IF MONEY IS ALREADY IN CONTRACT(SWAY ADMIN)
+                            //////MOVE ALL OR SOME (PARTIAL) FROM CONTRACT(SWAY ADMIN) INTO SELLERS ACCOUNT
+                            ////IF MONEY IS NOT ALREADY IN CONTRACT(SWAY ADMIN)
+                            //////MOVE ALL OR SOME (PARTIAL) FROM BUYERS ACCOUNT INTO SELLERS ACCOUNT
+                            /// SELL - SHOW DECREASE IN UNITS AND INCREASE IN BALANCE
+
+
                             //UPDATE THE MARKET DATA DATABASE TABLE, RETURNING CHANGE IN PRICE + VOLUME
                             marketData = dBMarket.UpdateMarketData(marketData);
 
