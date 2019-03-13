@@ -7,5 +7,9 @@ namespace FinaroEngine.Library
     public class Options
     {
         public string ConnectionString { get; set; }
+        public string URL { get; set; }
+        public string Address { get; set; }
+        public string ABI { get; set; }
+        public string SigningKey { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace FinaroEngine.Library
             this.entityId = entityId;
         }
 
-        public MarketOrders AddNewOrder(Order newOrder)
+        public MarketOrders AddNewOrder(Order newOrder, IContractCall contract)
         {
             Guid orderId = Guid.NewGuid();
             DBMarket dBMarket = new DBMarket(opts, this.userId, this.entityId);
@@ -53,7 +53,7 @@ namespace FinaroEngine.Library
 
                             bool updated;
                             MarketData marketData;
-                            DataTable updatedOrders = MatchOrders(entityId, row, dt, out updated, out marketData);
+                            DataTable updatedOrders = MatchOrders(contract, entityId, row, dt, out updated, out marketData);
 
                             //NEW ORDERS (SOME MAY ALREADY HAVE MATCHES)
                             sda.InsertCommand = new SqlCommandBuilder(sda).GetInsertCommand();
@@ -66,21 +66,6 @@ namespace FinaroEngine.Library
 
                             //RUNNING NEW ORDERS AND UPDATES AGAINST DB
                             sda.Update(dt);
-
-                            //TODO: SHOW USER UNIT OWNERSHIP PER ENTITY
-
-                            //MOVING MONEY INTO ETHER CONTRACT(SWAY ADMIN) OR SELLERS ACCOUNTS
-                            //ON AN OPEN ORDER:
-                            ////BUY - MOVE QUANTITY * PRICE INTO CONTRACT(SWAY ADMIN)
-                            ////SELL - DO NOTHING
-                            //ON A FILLED/PARTIAL ORDER:
-                            ////BUY - CHECK IF USER'S MONEY IS ALREADY IN THE CONTRACT(SWAY ADMIN) VIA ORDERID
-                            ////IF MONEY IS ALREADY IN CONTRACT(SWAY ADMIN)
-                            //////MOVE ALL OR SOME (PARTIAL) FROM CONTRACT(SWAY ADMIN) INTO SELLERS ACCOUNT
-                            ////IF MONEY IS NOT ALREADY IN CONTRACT(SWAY ADMIN)
-                            //////MOVE ALL OR SOME (PARTIAL) FROM BUYERS ACCOUNT INTO SELLERS ACCOUNT
-                            ////SELL - SHOW DECREASE IN UNITS AND INCREASE IN BALANCE
-
 
                             //UPDATE THE MARKET DATA DATABASE TABLE, RETURNING CHANGE IN PRICE + VOLUME
                             marketData = dBMarket.UpdateMarketData(marketData);
@@ -116,14 +101,26 @@ namespace FinaroEngine.Library
             return orders;            
         }
 
-        public static DataTable MatchOrders(int entityId, DataRow newOrder, DataTable orderBook, out bool updated, out MarketData marketData)
+        public static DataTable MatchOrders(IContractCall contract, int entityId, DataRow newOrder, DataTable orderBook, out bool updated, out MarketData marketData)
         {
             updated = false;
             DataTable updatedOrders = orderBook.Clone();
             marketData = new MarketData();
             marketData.EntityId = entityId;
             marketData.Volume = 0;
-            marketData.MarketPrice = null;         
+            marketData.MarketPrice = null;
+
+            //TODO: SHOW USER UNIT OWNERSHIP PER ENTITY
+
+            //ON AN OPEN ORDER:
+            ////BUY - DO NOTHING
+            ////SELL - DO NOTHING
+
+            //ON A FILLED/PARTIAL ORDER:
+            ////BUY 
+            //////MOVE ALL OR SOME (PARTIAL) FROM BUYER ACCOUNT INTO SELLERS ACCOUNT            
+            ////SELL
+            //////SHOW DECREASE IN UNITS AND INCREASE IN BALANCE
 
             foreach (DataRow dr in orderBook.Rows)
             {
@@ -187,6 +184,15 @@ namespace FinaroEngine.Library
             updatedOrders.ImportRow(newOrder);
             return updatedOrders;
         }
-
+        
+        public void SetUnits(int userId, int entityId, int units)
+        {
+            List<SqlParameter> prms = new List<SqlParameter> {
+                new SqlParameter("@USERID", userId),
+                new SqlParameter("@ENTITYID", userId),
+                new SqlParameter("@UNITS", userId)
+            };
+            DBUtility.ExecuteQuery(opts.ConnectionString, "spUpdateUserUnits", prms);
+        }
     }
 }

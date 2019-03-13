@@ -28,7 +28,8 @@ namespace FinaroEngine.Library
 
         public string AddNewOrder(TradeType tradeType, decimal price, int quantity, int unsetQuantity)
         {
-            var orders = order.AddNewOrder(new Order { TradeTypeId = (int)tradeType, Price = price, Quantity = quantity, UnsetQuantity = unsetQuantity });
+            IContractCall contractCall = new ContractCall(opts);
+            var orders = order.AddNewOrder(new Order { TradeTypeId = (int)tradeType, Price = price, Quantity = quantity, UnsetQuantity = unsetQuantity }, contractCall);
             return JsonConvert.SerializeObject(orders);
         }
 

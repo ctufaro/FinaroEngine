@@ -42,7 +42,15 @@ namespace FinaroEngine.Library
 
     public class RopstenAccount
     {
+        public const string Admin = "0x7D55aE48bC74b9047bb836488e54E06eF19Db74c";
         public const string Chris = "0xD64c013d4676F832D9BC69b4D65412dF6a393a76";
         public const string Mark = "0x8E86638C68BB5342F281D96f772f1447A40425D5";
+    }
+
+    public class LocalhostAccount
+    {
+        public const string Admin = "0xe4bf483141ce3bfb2439168944c92616f3798e7c";
+        public const string Chris = "0xb17a0cbde873d6af0e985e61ccdc4b3e06c479d0";
+        public const string Mark = "0x0bbdbb9b6805a67475e0f7940813c3143ea585ac";
     }
 }
