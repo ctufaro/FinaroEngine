@@ -49,6 +49,7 @@ namespace FinaroEngine.Library
                             row["Date"] = DateTime.Now;
                             row["Quantity"] = newOrder.Quantity;
                             row["UnsetQuantity"] = newOrder.UnsetQuantity;
+                            row["PublicKey"] = newOrder.PublicKey;
                             row["Status"] = (int)Status.Open;
 
                             bool updated;

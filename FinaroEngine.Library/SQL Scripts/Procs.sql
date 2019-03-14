@@ -1,11 +1,15 @@
-﻿USE [Sandbox]
+﻿USE [FinaroDB]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spUpdateUserUnits]    Script Date: 3/13/2019 4:03:34 PM ******/
+/****** Object:  StoredProcedure [dbo].[spUpdateUserUnits]    Script Date: 03/13/2019 21:14:04 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spUpdateUserUnits]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[spUpdateUserUnits]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spUpdateUserUnits]    Script Date: 3/13/2019 4:03:34 PM ******/
+USE [FinaroDB]
+GO
+
+/****** Object:  StoredProcedure [dbo].[spUpdateUserUnits]    Script Date: 03/13/2019 21:14:04 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -31,8 +35,9 @@ CREATE PROCEDURE [dbo].[spUpdateUserUnits]
 AS
 BEGIN
 	SET NOCOUNT ON;
-			
-	--INSERT
+    -- Insert statements for procedure here
+		
+	--NEW ENTRY
 	IF NOT EXISTS (SELECT TOP 1 Id FROM UNITS WHERE UserId = @USERID AND EntityId = @ENTITYID) BEGIN
 		INSERT INTO UNITS (UserId, EntityId, Units) VALUES
 		(@USERID, @ENTITYID, @UNITS)
@@ -41,13 +46,12 @@ BEGIN
 	--UPDATE
 	ELSE BEGIN
 		UPDATE UNITS SET
-		Units = @UNITS
+		Units = Units + @UNITS
 		WHERE UserId = @USERID
 		AND EntityId = @ENTITYID
 	END
+
 END
-
-
 
 
 GO

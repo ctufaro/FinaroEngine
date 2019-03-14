@@ -26,10 +26,10 @@ namespace FinaroEngine.Library
             this.entityId = entityId;
         }
 
-        public string AddNewOrder(TradeType tradeType, decimal price, int quantity, int unsetQuantity)
+        public string AddNewOrder(TradeType tradeType, decimal price, int quantity, int unsetQuantity, string publicKey)
         {
             IContractCall contractCall = new ContractCall(opts);
-            var orders = order.AddNewOrder(new Order { TradeTypeId = (int)tradeType, Price = price, Quantity = quantity, UnsetQuantity = unsetQuantity }, contractCall);
+            var orders = order.AddNewOrder(new Order { TradeTypeId = (int)tradeType, Price = price, Quantity = quantity, UnsetQuantity = unsetQuantity, PublicKey = publicKey }, contractCall);
             return JsonConvert.SerializeObject(orders);
         }
 

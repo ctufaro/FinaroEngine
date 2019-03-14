@@ -15,6 +15,7 @@ namespace FinaroEngine.Library
         public DateTime Date { get; set; }
         public int Quantity { get; set; }
         public int UnsetQuantity { get; set; }
+        public string PublicKey { get; set; }
         public int Status { get; set; }
     }
 }

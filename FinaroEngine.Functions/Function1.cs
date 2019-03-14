@@ -85,7 +85,7 @@ namespace FinaroEngine.Functions
             opts.URL = "https://ropsten.infura.io/54b96774a4654d7287a593d687eef1e1";
             opts.Address = "0x628322763cF6a2214bd04ab727E68FF11C13dcE0";
             OrderProcess op = new OrderProcess(opts, neworder.UserId, neworder.EntityId);
-            var orders = op.AddNewOrder((TradeType)neworder.TradeType, neworder.Price, neworder.Quantity, neworder.UnsetQuantity);
+            var orders = op.AddNewOrder((TradeType)neworder.TradeType, neworder.Price, neworder.Quantity, neworder.UnsetQuantity, neworder.PublicKey);
             return signalRMessages.AddAsync(
                 new SignalRMessage
                 {
@@ -207,6 +207,7 @@ namespace FinaroEngine.Functions
             public Decimal Price { get; set; }
             public int Quantity { get; set; }
             public int UnsetQuantity { get; set; }
+            public string PublicKey { get; set; }
         }
 
         public class Deposit
