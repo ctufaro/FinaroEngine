@@ -85,6 +85,7 @@ namespace FinaroEngine.Functions
             opts.URL = "https://ropsten.infura.io/54b96774a4654d7287a593d687eef1e1";
             opts.Address = "0x628322763cF6a2214bd04ab727E68FF11C13dcE0";
             OrderProcess op = new OrderProcess(opts, neworder.UserId, neworder.EntityId);
+            opts.SigningKey = "466aa69475dd2bed841db861f9bf36d94ba3f8852195317e54718efda22978e8";
             var orders = op.AddNewOrder((TradeType)neworder.TradeType, neworder.Price, neworder.Quantity, neworder.UnsetQuantity, neworder.PublicKey);
             return signalRMessages.AddAsync(
                 new SignalRMessage

@@ -17,5 +17,6 @@ namespace FinaroEngine.Library
         public int Quantity { get; set; }
         public int UnsetQuantity { get; set; }
         public int Status { get; set; }
+        public string TxHash { get; set; }
     }
 }

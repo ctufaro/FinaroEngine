@@ -39,6 +39,7 @@ namespace FinaroEngine.Library
                 myOrder.Quantity = Convert.ToInt32(dr["Quantity"]);
                 myOrder.UnsetQuantity = Convert.ToInt32(dr["UnsetQuantity"]);
                 myOrder.Status = Convert.ToInt32(dr["Status"]);
+                myOrder.TxHash = Convert.ToString(dr["TxHash"]);
                 myOrders.Add(myOrder);
             }
             return myOrders;

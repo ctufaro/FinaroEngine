@@ -13,6 +13,7 @@ namespace FinaroEngine.Tests
 
         public ContractCallTests()
         {
+            opts = new Options();
             opts.URL = "https://ropsten.infura.io/54b96774a4654d7287a593d687eef1e1"; //ROPSTEN
             opts.Address = "0x628322763cF6a2214bd04ab727E68FF11C13dcE0"; //ROPSTEN
             //opts.URL = "http://127.0.0.1:9545/";
@@ -57,7 +58,7 @@ namespace FinaroEngine.Tests
         public async Task SendSingleTokenFromUserToUser()
         {
             ContractCall contractCall = new ContractCall(opts);
-            var result = await contractCall.SendTokensFromAsync(RopstenAccount.Mark, RopstenAccount.Chris, .69);
+            var result = await contractCall.SendTokensFromAsync(RopstenAccount.Mark, RopstenAccount.Chris, .25);
         }
     }
 
