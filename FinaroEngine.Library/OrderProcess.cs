@@ -57,5 +57,17 @@ namespace FinaroEngine.Library
             return JsonConvert.SerializeObject(myOrders);
         }
 
+        public string GetMyBalance()
+        {
+            var myBalance = myOrder.GetMyBalance(this.userId);
+            return JsonConvert.SerializeObject(myBalance);
+        }
+        
+        public string GetMyUnits()
+        {
+            var myUnits = myOrder.GetMyUnits(this.userId, this.entityId);
+            return JsonConvert.SerializeObject(myUnits);
+        }
+
     }
 }

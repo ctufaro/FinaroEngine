@@ -53,3 +53,58 @@ BEGIN
 
 GO
 
+
+/****** Object:  StoredProcedure [dbo].[spSelectMyBalance]    Script Date: 3/15/2019 1:01:45 PM ******/
+DROP PROCEDURE [dbo].[spSelectMyBalance]
+GO
+
+/****** Object:  StoredProcedure [dbo].[spSelectMyBalance]    Script Date: 3/15/2019 1:01:45 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[spSelectMyBalance]
+-- Add the parameters for the stored procedure here
+@USERID INT
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	SELECT ISNULL(SUM([UNITS] * [MARKETPRICE]),0) AS UserBalance FROM UNITS U
+	LEFT JOIN MARKET_DATA M ON U.EntityId = M.EntityId
+	WHERE U.UserId = @USERID
+
+	END
+
+
+/****** Object:  StoredProcedure [dbo].[spSelectMyUnits]    Script Date: 3/15/2019 1:17:28 PM ******/
+DROP PROCEDURE [dbo].[spSelectMyUnits]
+GO
+
+/****** Object:  StoredProcedure [dbo].[spSelectMyUnits]    Script Date: 3/15/2019 1:17:28 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[spSelectMyUnits]
+-- Add the parameters for the stored procedure here
+@USERID INT,
+@ENTITYID INT
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	SELECT TOP 1 Units FROM UNITS WHERE UserId = @USERID AND EntityId = @ENTITYID
+
+	END
+
+GO
+

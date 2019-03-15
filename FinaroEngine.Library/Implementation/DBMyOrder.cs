@@ -18,6 +18,17 @@ namespace FinaroEngine.Library
             this.userId = userId;
         }
 
+        public decimal GetMyBalance(int userId)
+        {
+            decimal myBalance = 0;
+            List<SqlParameter> prms = new List<SqlParameter> {
+                new SqlParameter("@USERID", userId)
+            };
+            DataTable myBalanceTable = DBUtility.GetDataTable(opts.ConnectionString, "spSelectMyBalance", prms);
+            decimal.TryParse(myBalanceTable.Rows[0][0].ToString(), out myBalance);
+            return myBalance;
+        }
+
         public IEnumerable<MyOrder> GetMyOrder(int userId)
         {
             List<MyOrder> myOrders = new List<MyOrder>();
@@ -45,5 +56,16 @@ namespace FinaroEngine.Library
             return myOrders;
         }
 
+        public decimal GetMyUnits(int userId, int entityId)
+        {
+            decimal myUnits = 0;
+            List<SqlParameter> prms = new List<SqlParameter> {
+                new SqlParameter("@USERID", userId),
+                new SqlParameter("@ENTITYID", entityId)
+            };
+            DataTable myUnitsTable = DBUtility.GetDataTable(opts.ConnectionString, "spSelectMyUnits", prms);
+            decimal.TryParse(myUnitsTable.Rows[0][0].ToString(), out myUnits);
+            return myUnits;
+        }
     }
 }
