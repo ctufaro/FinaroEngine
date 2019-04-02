@@ -23,15 +23,23 @@ namespace FinaroEngine.Library
         public async Task<double> GetUserBalanceAsync(string address)
         {
             Web3 web3 = new Web3(this.opts.URL);
-            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.Address);
+            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.ContractAddress);
             int balance = (int)await swayContract.GetFunction("balanceOf").CallAsync<BigInteger>(address);
+            return (double)balance / 100;
+        }
+
+        public async Task<double> GetUserMarginBalanceAsync(string address)
+        {
+            Web3 web3 = new Web3(this.opts.URL);
+            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.ContractAddress);
+            int balance = (int)await swayContract.GetFunction("marginBalanceOf").CallAsync<BigInteger>(address);
             return (double)balance / 100;
         }
 
         public async Task<int> GetTotalSupplyAsync()
         {
             Web3 web3 = new Web3(this.opts.URL);
-            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.Address);
+            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.ContractAddress);
             int balance = (int)await swayContract.GetFunction("totalSupply").CallAsync<BigInteger>();
             return balance / 100;
         }
@@ -39,7 +47,7 @@ namespace FinaroEngine.Library
         public async Task<string> GetContractAddressAsync()
         {
             Web3 web3 = new Web3(this.opts.URL);
-            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.Address);
+            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.ContractAddress);
             return await swayContract.GetFunction("contractOwner").CallAsync<string>();
         }
 
@@ -47,7 +55,7 @@ namespace FinaroEngine.Library
         {
             var account = new Account(opts.SigningKey);
             var web3 = new Web3(account, this.opts.URL);
-            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.Address);
+            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.ContractAddress);
             HexBigInteger gasAmt = new HexBigInteger(new BigInteger(gas));
             HexBigInteger value = new HexBigInteger(new BigInteger(0));
             return await swayContract.GetFunction("transfer").SendTransactionAsync(account.Address, gasAmt, value, recipient, amount * 100);
@@ -57,10 +65,20 @@ namespace FinaroEngine.Library
         {
             var account = new Account(opts.SigningKey);
             var web3 = new Web3(account, this.opts.URL);
-            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.Address);
+            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.ContractAddress);
             HexBigInteger gasAmt = new HexBigInteger(new BigInteger(gas));
             HexBigInteger value = new HexBigInteger(new BigInteger(0));
             return await swayContract.GetFunction("transferFromOwner").SendTransactionAsync(account.Address, gasAmt, value, sender, recipient, amount * 100);
+        }
+
+        public async Task<string> TransferMargin(string from, string to, double tokens, int destorigin, int gas = 400000)
+        {
+            var account = new Account(opts.SigningKey);
+            var web3 = new Web3(account, this.opts.URL);
+            Contract swayContract = web3.Eth.GetContract(this.opts.ABI, this.opts.ContractAddress);
+            HexBigInteger gasAmt = new HexBigInteger(new BigInteger(gas));
+            HexBigInteger value = new HexBigInteger(new BigInteger(0));
+            return await swayContract.GetFunction("transferMargin").SendTransactionAsync(account.Address, gasAmt, value, from, to, tokens * 100, destorigin);
         }
     }
 }
