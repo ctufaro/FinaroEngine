@@ -11,5 +11,6 @@ namespace FinaroEngine.Library
         public string ContractAddress { get; set; }
         public string ABI { get; set; }
         public string SigningKey { get; set; }
+        public int GasAmount { get; set; }
     }
 }

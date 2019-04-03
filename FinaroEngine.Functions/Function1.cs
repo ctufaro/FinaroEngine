@@ -27,8 +27,8 @@ namespace FinaroEngine.Functions
         public static IActionResult GetOrders([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "orders/{userid}/{entityid}")]HttpRequest req, TraceWriter log, int userid, int entityid)
         {
             log.Info("Getting all orders");
-            var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
-            OrderProcess op = new OrderProcess(new Options { ConnectionString = conn }, userid, entityid);
+            Options opts = GetOptions();
+            OrderProcess op = new OrderProcess(opts, userid, entityid);
             var orders = op.GetNewOrders();
             return new OkObjectResult(orders);
         }
@@ -37,8 +37,8 @@ namespace FinaroEngine.Functions
         public static IActionResult GetTradeHistory([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tradehistory/{userid}/{entityid}")]HttpRequest req, TraceWriter log, int userid, int entityid)
         {
             log.Info("Getting trade history");
-            var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
-            OrderProcess op = new OrderProcess(new Options { ConnectionString = conn }, userid, entityid);
+            Options opts = GetOptions();
+            OrderProcess op = new OrderProcess(opts, userid, entityid);
             var orders = op.GetTradeHistory();
             return new OkObjectResult(orders);
         }
@@ -47,8 +47,8 @@ namespace FinaroEngine.Functions
         public static IActionResult GetMyOrders([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "myorders/{userid}/{entityid}")]HttpRequest req, TraceWriter log, int userid, int entityid)
         {
             log.Info("Getting my orders");
-            var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
-            OrderProcess op = new OrderProcess(new Options { ConnectionString = conn }, userid, entityid);
+            Options opts = GetOptions();
+            OrderProcess op = new OrderProcess(opts, userid, entityid);
             var myOrders = op.GetMyOrders();
             return new OkObjectResult(myOrders);
         }
@@ -57,8 +57,8 @@ namespace FinaroEngine.Functions
         public static IActionResult GetMarketData([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "market/{userid}/{entityid}")]HttpRequest req, TraceWriter log, int userid, int entityid)
         {
             log.Info("Getting market data");
-            var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
-            OrderProcess op = new OrderProcess(new Options { ConnectionString = conn }, userid, entityid);
+            Options opts = GetOptions();
+            OrderProcess op = new OrderProcess(opts, userid, entityid);
             var orders = op.GetMarketData();
             return new OkObjectResult(orders);
         }
@@ -67,8 +67,8 @@ namespace FinaroEngine.Functions
         public static IActionResult GetTeamPlayers([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "teamplayers/{entitytypeid}/{entityleagueid}")]HttpRequest req, TraceWriter log, int entitytypeid, int entityleagueid)
         {
             log.Info("Getting Team Players");
-            var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
-            DBTeamPlayer tp = new DBTeamPlayer(new Options { ConnectionString = conn });
+            Options opts = GetOptions();
+            DBTeamPlayer tp = new DBTeamPlayer(opts);
             var teamPlayers = tp.GetTeamPlayers(entitytypeid, entityleagueid);
             return new OkObjectResult(teamPlayers);
         }
@@ -78,13 +78,7 @@ namespace FinaroEngine.Functions
         {
             log.Info("Creating a new order");
             var neworder = new JsonSerializer().Deserialize<Order>(new JsonTextReader(new StreamReader(req.Body)));
-            var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
-            Options opts = new Options();
-            opts.ConnectionString = conn;
-            opts.ABI = Environment.GetEnvironmentVariable("ContractABI");
-            opts.URL = Environment.GetEnvironmentVariable("ContractURL");
-            opts.ContractAddress = Environment.GetEnvironmentVariable("ContractAddress");
-            opts.SigningKey = Environment.GetEnvironmentVariable("ContractSigningKey");
+            Options opts = GetOptions();
             OrderProcess op = new OrderProcess(opts, neworder.UserId, neworder.EntityId);
             var orders = op.AddNewOrder((TradeType)neworder.TradeType, neworder.Price, neworder.Quantity, neworder.UnsetQuantity, neworder.PublicKey);
             return signalRMessages.AddAsync(
@@ -102,16 +96,11 @@ namespace FinaroEngine.Functions
         {
             log.Info("Getting User Balance");
             log.Info("Getting User Token Balance");
-            Options opts = new Options();
-            opts.ABI = Environment.GetEnvironmentVariable("ContractABI");
-            opts.URL = Environment.GetEnvironmentVariable("ContractURL");
-            opts.ContractAddress = Environment.GetEnvironmentVariable("ContractAddress");
-            opts.SigningKey = Environment.GetEnvironmentVariable("ContractSigningKey");
+            Options opts = GetOptions();
             ContractCall contract = new ContractCall(opts);
             var balance = await contract.GetUserBalanceAsync(address);
             log.Info("Getting User Game Units");
-            var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
-            OrderProcess op = new OrderProcess(new Options { ConnectionString = conn }, userid, 0);
+            OrderProcess op = new OrderProcess(opts, userid, 0);
             var units = op.GetMyBalance();
             return new OkObjectResult(new { WalletBalance = balance, UnitBalance = units });
         }
@@ -120,8 +109,8 @@ namespace FinaroEngine.Functions
         public static IActionResult GetUserUnits([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "balance/units/{userid}/{entityid}")]HttpRequest req, TraceWriter log, int userid, int entityid)
         {
             log.Info("Getting User Units");
-            var conn = Environment.GetEnvironmentVariable("SQLConnectionString");
-            OrderProcess op = new OrderProcess(new Options { ConnectionString = conn }, userid, entityid);
+            Options opts = GetOptions();
+            OrderProcess op = new OrderProcess(opts, userid, entityid);
             var myUnits = op.GetMyUnits();
             return new OkObjectResult(myUnits);
         }
@@ -132,13 +121,9 @@ namespace FinaroEngine.Functions
             log.Info("Sending Tokens");
             var dreq = new JsonSerializer().Deserialize<Deposit>(new JsonTextReader(new StreamReader(req.Body)));
             var deposit = new Deposit { Address = dreq.Address, Amount = dreq.Amount };
-            Options opts = new Options();
-            opts.ABI = Environment.GetEnvironmentVariable("ContractABI");
-            opts.URL = Environment.GetEnvironmentVariable("ContractURL");
-            opts.ContractAddress = Environment.GetEnvironmentVariable("ContractAddress");
-            opts.SigningKey = Environment.GetEnvironmentVariable("ContractSigningKey");
+            Options opts = GetOptions();
             ContractCall contract = new ContractCall(opts);
-            var tokenSent = await contract.SendTokensAsync(deposit.Address, deposit.Amount);
+            var tokenSent = await contract.SendTokensAsync(deposit.Address, deposit.Amount, opts.GasAmount);
             return new OkObjectResult(tokenSent);
         }
 
@@ -147,14 +132,22 @@ namespace FinaroEngine.Functions
         {
             log.Info("Getting Margin Balance");
             var dreq = new JsonSerializer().Deserialize<Deposit>(new JsonTextReader(new StreamReader(req.Body)));
+            Options opts = GetOptions();
+            ContractCall contract = new ContractCall(opts);
+            var marginBalance = await contract.GetUserMarginBalanceAsync(address);
+            return new OkObjectResult(marginBalance);
+        }
+
+        public static Options GetOptions()
+        {
             Options opts = new Options();
+            opts.ConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
             opts.ABI = Environment.GetEnvironmentVariable("ContractABI");
             opts.URL = Environment.GetEnvironmentVariable("ContractURL");
             opts.ContractAddress = Environment.GetEnvironmentVariable("ContractAddress");
             opts.SigningKey = Environment.GetEnvironmentVariable("ContractSigningKey");
-            ContractCall contract = new ContractCall(opts);
-            var marginBalance = await contract.GetUserMarginBalanceAsync(address);
-            return new OkObjectResult(marginBalance);
+            opts.GasAmount = Convert.ToInt32(Environment.GetEnvironmentVariable("GasAmount"));
+            return opts;
         }
 
    

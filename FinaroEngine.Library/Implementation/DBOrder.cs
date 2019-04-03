@@ -27,6 +27,9 @@ namespace FinaroEngine.Library
             Guid orderId = Guid.NewGuid();
             DBMarket dBMarket = new DBMarket(opts, this.userId, this.entityId);
 
+            //BEFORE WE MATCH, LETS CHECK IF WE NEED TO MOVE MONEY TO MARGIN (SHORT SELLS)
+            MarginTransfer(newOrder, this.userId, this.entityId, contract, orderId);
+
             using (SqlConnection con = new SqlConnection(opts.ConnectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("spSelectOrdersForMatch", con))
@@ -226,7 +229,7 @@ namespace FinaroEngine.Library
             int sellerUserId = Convert.ToInt32(seller["UserId"]);
             int sellerEntityId = Convert.ToInt32(seller["EntityId"]);
 
-            Task<string> txResult = contract.SendTokensFromAsync(buyerPK, sellerPK, buyerAmount, 400000);
+            Task<string> txResult = contract.SendTokensFromAsync(buyerPK, sellerPK, buyerAmount, opts.GasAmount);
             txResult.Wait();
             var result = txResult.Result;
 
@@ -234,6 +237,32 @@ namespace FinaroEngine.Library
             SetUnits(sellerUserId, sellerEntityId, sellerQuantity * -1);            
 
             return result;
+        }
+
+
+        public void MarginTransfer(Order newOrder, int userId, int entityId, IContractCall contract, Guid orderId)
+        {
+            //SHORT SELL: FOR EVERY 1 UNIT LETS TRANSFER $100 INTO THEIR MARGIN ACCOUNT
+            if(newOrder.TradeTypeId == (int)TradeType.ShortSell)
+            {
+                double transferAmount = Convert.ToDouble(newOrder.Quantity) * 100D;
+                Task<string> txResult = contract.TransferMargin(newOrder.PublicKey, newOrder.PublicKey, transferAmount, (int)MarginMove.BalanceToMargin, opts.GasAmount);
+                txResult.Wait();
+                var result = txResult.Result;
+                //INSERT INTO DATABASE
+                List<SqlParameter> prms = new List<SqlParameter>
+                {
+                    new SqlParameter("@ORDERID", orderId),
+                    new SqlParameter("@USERID", userId),
+                    new SqlParameter("@PUBLICKEY", newOrder.PublicKey),
+                    new SqlParameter("@ENTITYID", entityId),
+                    new SqlParameter("@TRADETYPEID", newOrder.TradeTypeId),
+                    new SqlParameter("@PRICE", newOrder.Price),
+                    new SqlParameter("@QUANTITY", newOrder.Quantity),
+                    new SqlParameter("@TXHASH", result),
+                };
+                DBUtility.ExecuteQuery(opts.ConnectionString, "spInsertMargin", prms);
+            }
         }
     }
 }

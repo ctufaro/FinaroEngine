@@ -8,6 +8,7 @@ namespace FinaroEngine.Library
     public interface IContractCall
     {
         Task<string> SendTokensAsync(string recipient, double amount, int gas);
-        Task<string> SendTokensFromAsync(string sender, string recipient, double amount, int gas);        
+        Task<string> SendTokensFromAsync(string sender, string recipient, double amount, int gas);
+        Task<string> TransferMargin(string from, string to, double tokens, int destorigin, int gas);
     }
 }

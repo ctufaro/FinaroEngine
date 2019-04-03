@@ -51,7 +51,7 @@ namespace FinaroEngine.Library
             return await swayContract.GetFunction("contractOwner").CallAsync<string>();
         }
 
-        public async Task<string> SendTokensAsync(string recipient, double amount, int gas = 400000)
+        public async Task<string> SendTokensAsync(string recipient, double amount, int gas)
         {
             var account = new Account(opts.SigningKey);
             var web3 = new Web3(account, this.opts.URL);
@@ -61,7 +61,7 @@ namespace FinaroEngine.Library
             return await swayContract.GetFunction("transfer").SendTransactionAsync(account.Address, gasAmt, value, recipient, amount * 100);
         }
 
-        public async Task<string> SendTokensFromAsync(string sender, string recipient, double amount, int gas = 400000)
+        public async Task<string> SendTokensFromAsync(string sender, string recipient, double amount, int gas)
         {
             var account = new Account(opts.SigningKey);
             var web3 = new Web3(account, this.opts.URL);
@@ -71,7 +71,7 @@ namespace FinaroEngine.Library
             return await swayContract.GetFunction("transferFromOwner").SendTransactionAsync(account.Address, gasAmt, value, sender, recipient, amount * 100);
         }
 
-        public async Task<string> TransferMargin(string from, string to, double tokens, int destorigin, int gas = 400000)
+        public async Task<string> TransferMargin(string from, string to, double tokens, int destorigin, int gas)
         {
             var account = new Account(opts.SigningKey);
             var web3 = new Web3(account, this.opts.URL);
