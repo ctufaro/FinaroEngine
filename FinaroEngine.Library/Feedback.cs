@@ -21,6 +21,11 @@ namespace FinaroEngine.Library
         {
             try
             {
+                List<EmailAddress> emails = new List<EmailAddress>();
+                foreach (string s in recipients.Split(new char[] { ';' }))
+                {
+                    emails.Add(new EmailAddress(s));
+                }
                 var client = new SendGridClient(apiKey);
                 var msg = new SendGridMessage()
                 {
@@ -29,15 +34,16 @@ namespace FinaroEngine.Library
                     PlainTextContent = "Feedback: " + message,
                     HtmlContent = "<strong>Feedback: </strong><i>" + message+"</i>"
                 };
-                msg.AddTo(new EmailAddress(recipients));
+                msg.AddTos(emails);
                 var response = await client.SendEmailAsync(msg);
+                return response.StatusCode.ToString() + ":" + response.Headers.ToString();
             }
             catch (Exception e)
             {
                 return e.ToString();
             }
 
-            return "OK";
+            
         }
     }
 }
