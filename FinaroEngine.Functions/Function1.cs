@@ -138,6 +138,21 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(marginBalance);
         }
 
+        [FunctionName("sendFeedback")]
+        public static OkObjectResult SendFeedback([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "feedback")]HttpRequest req, TraceWriter log, [SignalR(HubName = "exchange")]IAsyncCollector<SignalRMessage> signalRMessages)
+        {
+            log.Info("Creating feedback");
+            string response = new StreamReader(req.Body).ReadToEnd();
+            var fb = JsonConvert.DeserializeAnonymousType(response, new { UserId = 0, Feedback = "" });            
+            Options opts = GetOptions();
+            Feedback feedback = new Feedback(opts, fb.UserId);
+            Task<string> result = feedback.Save(Environment.GetEnvironmentVariable("EmailAPIKey"),
+                                                Environment.GetEnvironmentVariable("EmailRecipients"),
+                                                fb.Feedback);
+            result.Wait();
+            return new OkObjectResult(result.Result);
+        }
+
         public static Options GetOptions()
         {
             Options opts = new Options();
@@ -240,5 +255,6 @@ namespace FinaroEngine.Functions
             public string Address { get; set; }
             public double Amount { get; set; }
         }
+                
     }
 }
