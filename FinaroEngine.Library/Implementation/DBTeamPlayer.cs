@@ -15,13 +15,14 @@ namespace FinaroEngine.Library
             this.opts = opts;
         }
 
-        public IEnumerable<TeamPlayer> GetTeamPlayers(int entityTypeId, int entityLeagueId)
+        public IEnumerable<TeamPlayer> GetTeamPlayers(int entityTypeId, int entityLeagueId, int groupId)
         {
             List<TeamPlayer> teamPlayers = new List<TeamPlayer>();
             List<SqlParameter> prms = new List<SqlParameter>
             {
                 new SqlParameter("@ENTITYTYPEID", entityTypeId),
-                new SqlParameter("@ENTITYLEAGUEID", entityLeagueId)
+                new SqlParameter("@ENTITYLEAGUEID", entityLeagueId),
+                new SqlParameter("@ENTITYGROUPREFID", groupId)
             };
             DataTable teamPlayerTable = DBUtility.GetDataTable(opts.ConnectionString, "spSelectTeamLeagueData", prms);
             foreach (DataRow dr in teamPlayerTable.Rows)

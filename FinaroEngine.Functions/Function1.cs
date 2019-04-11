@@ -63,13 +63,13 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(orders);
         }
 
-        [FunctionName("getTeamPayers")]
-        public static IActionResult GetTeamPlayers([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "teamplayers/{entitytypeid}/{entityleagueid}")]HttpRequest req, TraceWriter log, int entitytypeid, int entityleagueid)
+        [FunctionName("getTeamPlayers")]
+        public static IActionResult GetTeamPlayers([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "league/{entitytypeid}/{entityleagueid}/{groupId}")]HttpRequest req, TraceWriter log, int entitytypeid, int entityleagueid, int groupId)
         {
             log.Info("Getting Team Players");
             Options opts = GetOptions();
             DBTeamPlayer tp = new DBTeamPlayer(opts);
-            var teamPlayers = tp.GetTeamPlayers(entitytypeid, entityleagueid);
+            var teamPlayers = tp.GetTeamPlayers(entitytypeid, entityleagueid, groupId);
             return new OkObjectResult(teamPlayers);
         }
 

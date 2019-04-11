@@ -6,6 +6,6 @@ namespace FinaroEngine.Library
 {
     public interface ITeamPlayer
     {
-        IEnumerable<TeamPlayer> GetTeamPlayers(int entityTypeId, int entityLeagueId);
+        IEnumerable<TeamPlayer> GetTeamPlayers(int entityTypeId, int entityLeagueId, int groupId);
     }
 }
