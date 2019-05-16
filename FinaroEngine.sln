@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinaroEngine.Functions", "F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinaroEngine.Runner", "FinaroEngine.Runner\FinaroEngine.Runner.csproj", "{25E74CCF-85AB-4B71-8DC7-2ED1FC2C13E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinaroEngine.SMS", "FinaroEngine.SMS\FinaroEngine.SMS.csproj", "{6503B35A-48A8-4747-9EF9-F6F59F76D087}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinaroEngine.SMS", "FinaroEngine.SMS\FinaroEngine.SMS.csproj", "{6503B35A-48A8-4747-9EF9-F6F59F76D087}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinaroEngine.Loader", "FinaroEngine.Loader\FinaroEngine.Loader.csproj", "{36FF0B28-95CC-429A-B2E8-6AE5760BA693}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{6503B35A-48A8-4747-9EF9-F6F59F76D087}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6503B35A-48A8-4747-9EF9-F6F59F76D087}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6503B35A-48A8-4747-9EF9-F6F59F76D087}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36FF0B28-95CC-429A-B2E8-6AE5760BA693}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36FF0B28-95CC-429A-B2E8-6AE5760BA693}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36FF0B28-95CC-429A-B2E8-6AE5760BA693}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36FF0B28-95CC-429A-B2E8-6AE5760BA693}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

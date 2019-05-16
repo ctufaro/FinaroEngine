@@ -1,11 +1,7 @@
 ﻿USE [FinaroDB]
 GO
 
-/****** Object:  StoredProcedure [dbo].[spSelectMyOrders]    Script Date: 3/14/2019 4:59:02 PM ******/
-DROP PROCEDURE [dbo].[spSelectMyOrders]
-GO
-
-/****** Object:  StoredProcedure [dbo].[spSelectMyOrders]    Script Date: 3/14/2019 4:59:02 PM ******/
+/****** Object:  StoredProcedure [dbo].[spInsertTrend]    Script Date: 5/16/2019 3:22:06 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -13,38 +9,22 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
-
-CREATE PROCEDURE [dbo].[spSelectMyOrders]
--- Add the parameters for the stored procedure here
-@USERID INT
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[spInsertTrend] 
+	-- Add the parameters for the stored procedure here
+	@NAME VARCHAR(MAX),
+	@URL VARCHAR(MAX),
+	@TWEETVOLUME INT
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-
-	SELECT ORDERS.[Id]
-		  ,[OrderId]
-		  ,[UserId]
-		  ,UPPER(E.Name)[Name]
-		  ,[EntityId]
-		  ,[TradeTypeId]
-		  ,[Price]
-		  ,[Date]
-		  ,Quantity
-		  ,UnsetQuantity
-		  ,[Status]
-		  ,[TxHash]
-	  FROM ORDERS
-	  LEFT JOIN ENTITIES E ON E.ID = ORDERS.EntityId
-	  WHERE [UserId] = @USERID
-
-	END
-
+	INSERT INTO [dbo].[TRENDS] ([Name],[URL],[TweetVolume], [LoadDate])
+	VALUES (@NAME,@URL,@TWEETVOLUME,GETDATE())
+END
 
 
 
@@ -53,78 +33,12 @@ BEGIN
 
 GO
 
-
-/****** Object:  StoredProcedure [dbo].[spSelectMyBalance]    Script Date: 3/15/2019 1:01:45 PM ******/
-DROP PROCEDURE [dbo].[spSelectMyBalance]
-GO
-
-/****** Object:  StoredProcedure [dbo].[spSelectMyBalance]    Script Date: 3/15/2019 1:01:45 PM ******/
+/****** Object:  StoredProcedure [dbo].[spSelectTrends]    Script Date: 5/16/2019 3:22:06 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-CREATE PROCEDURE [dbo].[spSelectMyBalance]
--- Add the parameters for the stored procedure here
-@USERID INT
-AS
-BEGIN
-
-	SET NOCOUNT ON;
-
-	SELECT ISNULL(SUM([UNITS] * [MARKETPRICE]),0) AS UserBalance FROM UNITS U
-	LEFT JOIN MARKET_DATA M ON U.EntityId = M.EntityId
-	WHERE U.UserId = @USERID
-
-	END
-
-
-/****** Object:  StoredProcedure [dbo].[spSelectMyUnits]    Script Date: 3/15/2019 1:17:28 PM ******/
-DROP PROCEDURE [dbo].[spSelectMyUnits]
-GO
-
-/****** Object:  StoredProcedure [dbo].[spSelectMyUnits]    Script Date: 3/15/2019 1:17:28 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[spSelectMyUnits]
--- Add the parameters for the stored procedure here
-@USERID INT,
-@ENTITYID INT
-AS
-BEGIN
-
-	SET NOCOUNT ON;
-
-	DECLARE @RETUNITS DECIMAL(18,0)
-	SET @RETUNITS = (SELECT TOP 1 UNITS FROM UNITS WHERE UserId = @USERID AND EntityId = @ENTITYID)
-	SELECT ISNULL(@RETUNITS,0) [Units]
-
-	END
-
-GO
-
-USE [FinaroDB]
-GO
-
-/****** Object:  StoredProcedure [dbo].[spInsertTestUnits]    Script Date: 3/15/2019 4:26:24 PM ******/
-DROP PROCEDURE [dbo].[spInsertTestUnits]
-GO
-
-/****** Object:  StoredProcedure [dbo].[spInsertTestUnits]    Script Date: 3/15/2019 4:26:24 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
 
 
 
@@ -136,141 +50,29 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[spInsertTestUnits] 
+CREATE PROCEDURE [dbo].[spSelectTrends] 
 	-- Add the parameters for the stored procedure here
-	@USERID INT
 
 AS
 BEGIN
-	SET NOCOUNT ON;
-    -- Insert statements for procedure here
-		
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,1,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,2,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,3,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,4,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,5,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,6,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,7,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,8,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,9,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,10,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,11,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,12,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,13,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,14,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,15,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,16,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,17,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,18,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,19,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,20,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,21,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,22,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,23,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,24,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,25,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,26,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,27,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,28,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,29,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,30,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,32,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,33,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,34,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,35,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,36,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,37,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,38,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,39,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,40,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,41,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,42,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,43,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,44,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,45,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,46,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,47,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,48,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,49,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,50,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,51,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,52,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,53,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,54,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,55,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,56,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,57,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,58,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,59,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,60,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,61,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,62,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,63,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,64,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,65,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,66,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,67,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,68,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,69,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,70,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,71,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,72,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,73,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,74,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,75,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,76,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,77,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,78,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,79,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,80,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,81,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,82,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,83,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,84,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,85,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,86,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,87,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,88,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,89,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,90,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,91,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,92,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,93,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,94,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,95,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,96,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,97,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,98,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,99,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,100,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,101,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,102,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,103,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,104,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,105,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,106,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,107,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,108,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,109,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,110,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,111,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,112,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,113,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,114,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,115,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,116,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,117,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,118,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,119,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,120,1000)
-	INSERT INTO UNITS (UserId,EntityId,Units) VALUES (@USERID,121,1000)
 
+	SET NOCOUNT ON;
+	
+	SELECT * FROM 
+	(
+		SELECT [Id],[Name],[URL],[TweetVolume],Convert(date,[LoadDate])[LoadDate],ROW_NUMBER() OVER(PARTITION BY NAME ORDER BY TweetVolume DESC, Convert(date,[LoadDate]) DESC) [Row]
+		FROM [FinaroDB].[dbo].[TRENDS]
+	) AS TRENDDATA
+	WHERE [Row] = 1
+	ORDER BY Convert(date,[LoadDate]) DESC,TweetVolume DESC
 END
 
 
 
+
+
+
+
+
 GO
-
-
 
