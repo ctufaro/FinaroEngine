@@ -7,27 +7,34 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using FinaroEngine.Library;
 
 namespace FinaroEngine.Functions
 {
     public static class TrndxFunc
     {
-        [FunctionName("run")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-            ILogger log)
+        /// <summary>
+        /// /api/trends
+        /// </summary>
+
+        [FunctionName("getTrends")]
+        public static async Task<IActionResult> GetTrends([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trends")]HttpRequest req, ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            log.LogInformation("Getting all Trends");            
+            Trends trends = new Trends(GetOptions());
+            return new OkObjectResult(trends.GetTrendsJSON());
+        }
 
-            string name = req.Query["name"];
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
-
-            return name != null
-                ? (ActionResult)new OkObjectResult($"Hello, {name}")
-                : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+        public static Options GetOptions()
+        {
+            Options opts = new Options();
+            opts.ConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
+            opts.ABI = Environment.GetEnvironmentVariable("ContractABI");
+            opts.URL = Environment.GetEnvironmentVariable("ContractURL");
+            opts.ContractAddress = Environment.GetEnvironmentVariable("ContractAddress");
+            opts.SigningKey = Environment.GetEnvironmentVariable("ContractSigningKey");
+            opts.GasAmount = Convert.ToInt32(Environment.GetEnvironmentVariable("GasAmount"));
+            return opts;
         }
     }
 }

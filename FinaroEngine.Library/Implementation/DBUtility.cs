@@ -15,7 +15,8 @@ namespace FinaroEngine.Library
                 using (SqlCommand cmd = new SqlCommand(storedProcedure, con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddRange(prm.ToArray());
+                    if(prm!=null)
+                        cmd.Parameters.AddRange(prm.ToArray());
                     using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                     {
                         using (DataTable dt = new DataTable())
