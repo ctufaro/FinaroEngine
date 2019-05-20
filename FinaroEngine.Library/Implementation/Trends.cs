@@ -26,7 +26,7 @@ namespace FinaroEngine.Library
                 decimal lastPrice = randomPrices[4];
                 bool hasGain = randomPrices[4] > randomPrices[3] ? true : false;
                 string myColor = hasGain ? "#0079FF" : "#DE3442";
-                string myCSS = hasGain ? "btn btn-primary btn-sm" : "btn btn-danger btn-sm";
+                string myCSS = hasGain ? "btn btn-outline-primary btn-sm" : "btn btn-outline-danger btn-sm";
                 string[] myGradient = hasGain ? new string[] { "#0079FF", "#4da0ff" } : new string[] { "#DE3442", "#e66570" };
 
                 trends.Add(new Trend
