@@ -20,9 +20,6 @@ namespace FinaroEngine.Loader
 
             SearchTweets("litecoin");
 
-
-
-
             Console.ReadLine();
         }
 
