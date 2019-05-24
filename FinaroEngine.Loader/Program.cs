@@ -14,9 +14,15 @@ namespace FinaroEngine.Loader
 
         static string conn = "Data Source=VM-DEV-SQL\\sql2014;Initial Catalog=FinaroDB;persist security info=True; Integrated Security=SSPI;";
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            DoWorkPollingTask();
+            //DoWorkPollingTask();
+
+            SearchTweets("litecoin");
+
+
+
+
             Console.ReadLine();
         }
 
@@ -59,11 +65,12 @@ namespace FinaroEngine.Loader
             }
         }
 
-        private static void SearchTweets()
+        private static void SearchTweets(string tweet)
         {
             var request = new RestRequest("1.1/search/tweets.json", Method.GET);
-            request.AddQueryParameter("q", "gameofthrones");
-            request.AddQueryParameter("result_type", "popular");
+            request.AddQueryParameter("q", tweet);
+            //request.AddQueryParameter("result_type", "popular");
+            request.AddQueryParameter("count", "100");
 
             var client = new RestClient("https://api.twitter.com")
             {
@@ -77,6 +84,14 @@ namespace FinaroEngine.Loader
             IRestResponse response = client.Execute(request);
             var content = response.Content; // raw content as string
             Console.WriteLine("Hello World!");
+            dynamic stuff = JsonConvert.DeserializeObject(content);
+
+            foreach (JObject item in stuff["statuses"])
+            {
+                Console.WriteLine(item["text"]);
+            }
+
+
         }
 
 
