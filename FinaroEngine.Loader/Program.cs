@@ -16,10 +16,8 @@ namespace FinaroEngine.Loader
 
         static async Task Main(string[] args)
         {
-            //DoWorkPollingTask();
-
-            SearchTweets("litecoin");
-
+            DoWorkPollingTask();
+            //SearchTweets("litecoin");
             Console.ReadLine();
         }
 
