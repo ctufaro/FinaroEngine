@@ -12,7 +12,7 @@ namespace FinaroEngine.Loader
     class Program
     {
 
-        static string conn = "Data Source=VM-DEV-SQL\\sql2014;Initial Catalog=FinaroDB;persist security info=True; Integrated Security=SSPI;";
+        static string conn = "";
 
         static async Task Main(string[] args)
         {
