@@ -6,16 +6,33 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.FileExtensions;
+using Microsoft.Extensions.Configuration.Json;
+using System.IO;
 
 namespace FinaroEngine.Loader
 {
     class Program
     {
-
-        static string conn = "";
+        static string sqlConnectionString = "";
+        static string twitterConsumerKey = "";
+        static string twitterConsumerSecret = "";
+        static string twitterAccessToken = "";
+        static string twitterAccessTokenSecret = "";
+        static IConfiguration config;
 
         static async Task Main(string[] args)
         {
+            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
+            config = new ConfigurationBuilder().AddJsonFile("appsettings.json", true, true).Build();
+
+            sqlConnectionString = config["SQLConnectionString"];
+            twitterConsumerKey = config["TwitterConsumerKey"];
+            twitterConsumerSecret = config["TwitterConsumerSecret"];
+            twitterAccessToken = config["TwitterAccessToken"];
+            twitterAccessTokenSecret = config["TwitterAccessTokenSecret"];
+
             DoWorkPollingTask();
             //SearchTweets("litecoin");
             Console.ReadLine();
@@ -30,10 +47,10 @@ namespace FinaroEngine.Loader
             var client = new RestClient("https://api.twitter.com")
             {
                 Authenticator = OAuth1Authenticator.ForProtectedResource(
-                    "iJBiRnHLroxwUeunhJsPkXnX9",
-                    "RVcf0S16exq8hZY3U6MQ0SCII4hXEwYZ7Ud227xTzEbIK4GN3m",
-                    "1137829801-PfBR2DFGCDnVOaRvx5mFmhZ7jm5fAW8ObXnyqCC",
-                    "7IsuoHiVmxTomCRKZNGiChadTr4WvGChqK7iEdUUH4ylY")
+                    config["TwitterConsumerKey"],
+                    config["TwitterConsumerSecret"],
+                    config["TwitterAccessToken"],
+                    config["TwitterAccessTokenSecret"])
             };
 
             IRestResponse response = client.Execute(request);
@@ -54,7 +71,7 @@ namespace FinaroEngine.Loader
                     sparams.Add(new SqlParameter("@NAME", trend["name"].ToString()));
                     sparams.Add(new SqlParameter("@URL", trend["url"].ToString()));
                     sparams.Add(new SqlParameter("@TWEETVOLUME", volume));
-                    FinaroEngine.Library.DBUtility.ExecuteQuery(conn, "spInsertTrend", sparams);
+                    FinaroEngine.Library.DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sparams);
 
                 }
             }
@@ -70,10 +87,10 @@ namespace FinaroEngine.Loader
             var client = new RestClient("https://api.twitter.com")
             {
                 Authenticator = OAuth1Authenticator.ForProtectedResource(
-                    "iJBiRnHLroxwUeunhJsPkXnX9",
-                    "RVcf0S16exq8hZY3U6MQ0SCII4hXEwYZ7Ud227xTzEbIK4GN3m",
-                    "1137829801-PfBR2DFGCDnVOaRvx5mFmhZ7jm5fAW8ObXnyqCC",
-                    "7IsuoHiVmxTomCRKZNGiChadTr4WvGChqK7iEdUUH4ylY")
+                    config["TwitterConsumerKey"],
+                    config["TwitterConsumerSecret"],
+                    config["TwitterAccessToken"],
+                    config["TwitterAccessTokenSecret"])
             };
 
             IRestResponse response = client.Execute(request);
