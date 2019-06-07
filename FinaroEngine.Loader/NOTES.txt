@@ -1,0 +1,6 @@
+﻿|TREND LOADER|
+
++every 15 minutes load into database
++every 1440 minutes clear database except trends that have:
+ -orders
+ -user created
