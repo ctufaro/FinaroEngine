@@ -33,16 +33,24 @@ namespace FinaroEngine.Loader
             twitterAccessToken = config["TwitterAccessToken"];
             twitterAccessTokenSecret = config["TwitterAccessTokenSecret"];
 
-            DoWorkPollingTask();
+            //DoWorkPollingTask();
             //SearchTweets("litecoin");
-            Console.ReadLine();
+
+            await Task.Run(() =>
+            {
+                Trending();
+            }).ContinueWith((t) =>
+            {
+                Console.WriteLine("Completed");
+            });
+
         }
 
         private static void Trending()
         {
             var request = new RestRequest("1.1/trends/place.json", Method.GET);
-            request.AddQueryParameter("id", "2459115");
-            //request.AddQueryParameter("result_type", "popular");
+            request.AddQueryParameter("id", "23424977");
+            request.AddQueryParameter("result_type", "popular");
 
             var client = new RestClient("https://api.twitter.com")
             {
@@ -72,7 +80,6 @@ namespace FinaroEngine.Loader
                     sparams.Add(new SqlParameter("@URL", trend["url"].ToString()));
                     sparams.Add(new SqlParameter("@TWEETVOLUME", volume));
                     FinaroEngine.Library.DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sparams);
-
                 }
             }
         }
@@ -105,8 +112,7 @@ namespace FinaroEngine.Loader
 
 
         }
-
-
+        
         static void DoWorkPollingTask()
         {
             Task.Run(async () =>
