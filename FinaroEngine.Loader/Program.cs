@@ -48,6 +48,10 @@ namespace FinaroEngine.Loader
 
         private static void Trending()
         {
+            List<SqlParameter> dummy = new List<SqlParameter>();
+            dummy.Add(new SqlParameter("@DUMMY", -1));
+            FinaroEngine.Library.DBUtility.ExecuteQuery(sqlConnectionString, "spClearTrends", dummy);
+
             var request = new RestRequest("1.1/trends/place.json", Method.GET);
             request.AddQueryParameter("id", "23424977");
             request.AddQueryParameter("result_type", "popular");
