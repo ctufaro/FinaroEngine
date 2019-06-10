@@ -15,30 +15,30 @@ namespace FinaroEngine.Loader
 {
     class Program
     {
-        static string sqlConnectionString = "";
-        static string twitterConsumerKey = "";
-        static string twitterConsumerSecret = "";
-        static string twitterAccessToken = "";
-        static string twitterAccessTokenSecret = "";
-        static IConfiguration config;
+        //static string sqlConnectionString = "";
+        //static string twitterConsumerKey = "";
+        //static string twitterConsumerSecret = "";
+        //static string twitterAccessToken = "";
+        //static string twitterAccessTokenSecret = "";
+        //static IConfiguration config;
 
         static async Task Main(string[] args)
         {
             var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
-            config = new ConfigurationBuilder().AddJsonFile("appsettings.json", true, true).Build();
+            IConfiguration config = new ConfigurationBuilder().AddJsonFile("appsettings.json", true, true).Build();
 
-            sqlConnectionString = config["SQLConnectionString"];
-            twitterConsumerKey = config["TwitterConsumerKey"];
-            twitterConsumerSecret = config["TwitterConsumerSecret"];
-            twitterAccessToken = config["TwitterAccessToken"];
-            twitterAccessTokenSecret = config["TwitterAccessTokenSecret"];
+            string sqlConnectionString = config["SQLConnectionString"];
+            string twitterConsumerKey = config["TwitterConsumerKey"];
+            string twitterConsumerSecret = config["TwitterConsumerSecret"];
+            string twitterAccessToken = config["TwitterAccessToken"];
+            string twitterAccessTokenSecret = config["TwitterAccessTokenSecret"];
 
             //DoWorkPollingTask();
             //SearchTweets("litecoin");
 
             await Task.Run(() =>
             {
-                Trending();
+                LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
             }).ContinueWith((t) =>
             {
                 Console.WriteLine("Completed");
@@ -46,7 +46,7 @@ namespace FinaroEngine.Loader
 
         }
 
-        private static void Trending()
+        private static void LoadTrends(string sqlConnectionString, string twitterConsumerKey, string twitterConsumerSecret, string twitterAccessToken, string twitterAccessTokenSecret)
         {
             List<SqlParameter> dummy = new List<SqlParameter>();
             dummy.Add(new SqlParameter("@DUMMY", -1));
@@ -59,10 +59,10 @@ namespace FinaroEngine.Loader
             var client = new RestClient("https://api.twitter.com")
             {
                 Authenticator = OAuth1Authenticator.ForProtectedResource(
-                    config["TwitterConsumerKey"],
-                    config["TwitterConsumerSecret"],
-                    config["TwitterAccessToken"],
-                    config["TwitterAccessTokenSecret"])
+                    twitterConsumerKey,
+                    twitterConsumerSecret,
+                    twitterAccessToken,
+                    twitterAccessTokenSecret)
             };
 
             IRestResponse response = client.Execute(request);
@@ -88,7 +88,7 @@ namespace FinaroEngine.Loader
             }
         }
 
-        private static void SearchTweets(string tweet)
+        private static void SearchTweets(string tweet, string twitterConsumerKey, string twitterConsumerSecret, string twitterAccessToken, string twitterAccessTokenSecret)
         {
             var request = new RestRequest("1.1/search/tweets.json", Method.GET);
             request.AddQueryParameter("q", tweet);
@@ -98,10 +98,10 @@ namespace FinaroEngine.Loader
             var client = new RestClient("https://api.twitter.com")
             {
                 Authenticator = OAuth1Authenticator.ForProtectedResource(
-                    config["TwitterConsumerKey"],
-                    config["TwitterConsumerSecret"],
-                    config["TwitterAccessToken"],
-                    config["TwitterAccessTokenSecret"])
+                    twitterConsumerKey,
+                    twitterConsumerSecret,
+                    twitterAccessToken,
+                    twitterAccessTokenSecret)
             };
 
             IRestResponse response = client.Execute(request);
@@ -124,7 +124,7 @@ namespace FinaroEngine.Loader
                 while (true)
                 {
                     // update the UI on the UI thread
-                    Trending();
+                    //Trending();
 
                     // don't run again for at least 200 milliseconds
                     await Task.Delay(200);

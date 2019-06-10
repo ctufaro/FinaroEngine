@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinaroEngine.Runner", "Fina
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinaroEngine.SMS", "FinaroEngine.SMS\FinaroEngine.SMS.csproj", "{6503B35A-48A8-4747-9EF9-F6F59F76D087}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinaroEngine.Loader", "FinaroEngine.Loader\FinaroEngine.Loader.csproj", "{36FF0B28-95CC-429A-B2E8-6AE5760BA693}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinaroEngine.Loader", "FinaroEngine.Loader\FinaroEngine.Loader.csproj", "{36FF0B28-95CC-429A-B2E8-6AE5760BA693}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -25,6 +25,20 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(trends.GetTrendsJSON());
         }
 
+
+        [FunctionName("loadTrends")]
+        public static void LoadTrends([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, ILogger log)
+        {
+            string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
+            string twitterConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
+            string twitterConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
+            string twitterAccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
+            string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
+
+            TrendLoader.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
+            log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
+        }
+
         public static Options GetOptions()
         {
             Options opts = new Options();
