@@ -39,6 +39,14 @@ namespace FinaroEngine.Functions
             log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
         }
 
+        [FunctionName("clearTrends")]
+        public static void ClearTrends([TimerTrigger("0 0 */24 * * *")]TimerInfo myTimer, ILogger log)
+        {
+            string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
+            TrendLoader.ClearTrends(sqlConnectionString);
+            log.LogInformation($"C# ClearTrends Timer trigger function executed at: {DateTime.Now}");
+        }
+
         public static Options GetOptions()
         {
             Options opts = new Options();

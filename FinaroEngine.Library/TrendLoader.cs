@@ -13,10 +13,6 @@ namespace FinaroEngine.Library
     {
         public static void LoadTrends(string sqlConnectionString, string twitterConsumerKey, string twitterConsumerSecret, string twitterAccessToken, string twitterAccessTokenSecret)
         {
-            List<SqlParameter> dummy = new List<SqlParameter>();
-            dummy.Add(new SqlParameter("@DUMMY", -1));
-            FinaroEngine.Library.DBUtility.ExecuteQuery(sqlConnectionString, "spClearTrends", dummy);
-
             var request = new RestRequest("1.1/trends/place.json", Method.GET);
             request.AddQueryParameter("id", "23424977");
             request.AddQueryParameter("result_type", "popular");
@@ -51,6 +47,12 @@ namespace FinaroEngine.Library
                     FinaroEngine.Library.DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sparams);
                 }
             }
+        }
+
+        public static void ClearTrends(string sqlConnectionString)
+        {
+            List<SqlParameter> dummy = new List<SqlParameter> { new SqlParameter("@DUMMY", -1) };
+            FinaroEngine.Library.DBUtility.ExecuteQuery(sqlConnectionString, "spClearTrends", dummy);
         }
     }
 }

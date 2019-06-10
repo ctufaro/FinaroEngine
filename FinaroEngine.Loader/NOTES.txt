@@ -1,6 +1,10 @@
-﻿|TREND LOADER|
-+every 30 minutes load into database
-+every 1440 minutes clear database except trends that have:
- -orders
- -user created
- -were included in last 10 loads (popular)
+﻿[TREND LOADER]
+* every 30 minutes load into database
+* every 1440 minutes clear database except trends that have:
+  > orders
+  > user created
+  > were included in last 10 loads (popular)
+
+[CRON FORMAT]
+* every 30 minutes = 0 */30 * * * *
+* every 24 hours = 0 0 */24 * * *
