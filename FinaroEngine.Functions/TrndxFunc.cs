@@ -27,7 +27,7 @@ namespace FinaroEngine.Functions
 
 
         [FunctionName("loadTrends")]
-        public static void LoadTrends([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, ILogger log)
+        public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
         {
             string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
             string twitterConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
