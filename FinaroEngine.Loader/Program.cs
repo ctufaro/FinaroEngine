@@ -16,13 +16,6 @@ namespace FinaroEngine.Loader
 {
     class Program
     {
-        //static string sqlConnectionString = "";
-        //static string twitterConsumerKey = "";
-        //static string twitterConsumerSecret = "";
-        //static string twitterAccessToken = "";
-        //static string twitterAccessTokenSecret = "";
-        //static IConfiguration config;
-
         static async Task Main(string[] args)
         {
             var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
@@ -33,48 +26,14 @@ namespace FinaroEngine.Loader
             string twitterConsumerSecret = config["TwitterConsumerSecret"];
             string twitterAccessToken = config["TwitterAccessToken"];
             string twitterAccessTokenSecret = config["TwitterAccessTokenSecret"];
+            string endPoint = config["TxtAnalyEndPoint"];
+            string key1 = config["TxtAnalyKey"];
 
-            //DoWorkPollingTask();
-            //SearchTweets("litecoin");
-
-            await Task.Run(() =>
-            {
-                TrendLoader.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
-            }).ContinueWith((t) =>
-            {
-                Console.WriteLine("Completed");
-            });
-
-        }
-
-        private static void SearchTweets(string tweet, string twitterConsumerKey, string twitterConsumerSecret, string twitterAccessToken, string twitterAccessTokenSecret)
-        {
-            var request = new RestRequest("1.1/search/tweets.json", Method.GET);
-            request.AddQueryParameter("q", tweet);
-            //request.AddQueryParameter("result_type", "popular");
-            request.AddQueryParameter("count", "100");
-
-            var client = new RestClient("https://api.twitter.com")
-            {
-                Authenticator = OAuth1Authenticator.ForProtectedResource(
-                    twitterConsumerKey,
-                    twitterConsumerSecret,
-                    twitterAccessToken,
-                    twitterAccessTokenSecret)
-            };
-
-            IRestResponse response = client.Execute(request);
-            var content = response.Content; // raw content as string
-            Console.WriteLine("Hello World!");
-            dynamic stuff = JsonConvert.DeserializeObject(content);
-
-            foreach (JObject item in stuff["statuses"])
-            {
-                Console.WriteLine(item["text"]);
-            }
-
-
-        }
+            //var tweets = await TrendLibrary.GetTweetsAsync("#TrumpsWorseThanNixon", 3, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
+            //var retval = await TrendLibrary.GetSentimentAvgAsync(endPoint, key1, tweets);
+            //Console.WriteLine($"Average: {retval.Value}");
+            Console.ReadLine();
+        }        
         
         static void DoWorkPollingTask()
         {

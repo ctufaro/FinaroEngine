@@ -35,7 +35,7 @@ namespace FinaroEngine.Functions
             string twitterAccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
             string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
 
-            TrendLoader.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
+            TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
             log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
         }
 
@@ -43,7 +43,7 @@ namespace FinaroEngine.Functions
         public static void ClearTrends([TimerTrigger("0 0 */24 * * *")]TimerInfo myTimer, ILogger log)
         {
             string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
-            TrendLoader.ClearTrends(sqlConnectionString);
+            TrendLibrary.ClearTrends(sqlConnectionString);
             log.LogInformation($"C# ClearTrends Timer trigger function executed at: {DateTime.Now}");
         }
 
