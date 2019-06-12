@@ -16,7 +16,7 @@ namespace FinaroEngine.Library
 {
     public class TrendLibrary
     {
-        public static void LoadTrends(string sqlConnectionString, string twitterConsumerKey, string twitterConsumerSecret, string twitterAccessToken, string twitterAccessTokenSecret)
+        public static void LoadTrends(string sqlConnectionString, string twitterConsumerKey, string twitterConsumerSecret, string twitterAccessToken, string twitterAccessTokenSecret, Action<string> LogError)
         {
             var request = new RestRequest("1.1/trends/place.json", Method.GET);
             request.AddQueryParameter("id", "23424977");
@@ -57,7 +57,7 @@ namespace FinaroEngine.Library
                     }
                     catch(Exception e)
                     {
-                        //Console.WriteLine(e.ToString());
+                        LogError(e.ToString());
                     }
                 }
             }

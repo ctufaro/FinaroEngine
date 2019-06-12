@@ -36,7 +36,7 @@ namespace FinaroEngine.Loader
             //    Console.WriteLine($"({q}) Score: {retval}");                
             //}
 
-            TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
+            TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, (err) => Console.WriteLine(err));
         }        
         
         static void DoWorkPollingTask()
