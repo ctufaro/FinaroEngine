@@ -26,13 +26,17 @@ namespace FinaroEngine.Loader
             string twitterConsumerSecret = config["TwitterConsumerSecret"];
             string twitterAccessToken = config["TwitterAccessToken"];
             string twitterAccessTokenSecret = config["TwitterAccessTokenSecret"];
-            string endPoint = config["TxtAnalyEndPoint"];
-            string key1 = config["TxtAnalyKey"];
 
-            //var tweets = await TrendLibrary.GetTweetsAsync("#TrumpsWorseThanNixon", 3, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
-            //var retval = await TrendLibrary.GetSentimentAvgAsync(endPoint, key1, tweets);
-            //Console.WriteLine($"Average: {retval.Value}");
-            Console.ReadLine();
+            //while (true)
+            //{
+            //    Console.Write("Enter Text: ");
+            //    string q = Console.ReadLine();
+            //    var tweets = await TrendLibrary.GetTweetsAsync(q, 10, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
+            //    var retval = await TrendLibrary.GetVaderSentAvgAsync(tweets);
+            //    Console.WriteLine($"({q}) Score: {retval}");                
+            //}
+
+            TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
         }        
         
         static void DoWorkPollingTask()

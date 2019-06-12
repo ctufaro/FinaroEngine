@@ -1,7 +1,4 @@
-﻿using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime;
-using Microsoft.Azure.CognitiveServices.Language.TextAnalytics;
-using Microsoft.Azure.CognitiveServices.Language.TextAnalytics.Models;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -10,8 +7,10 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using VaderSharp;
 
 namespace FinaroEngine.Library
 {
@@ -40,17 +39,26 @@ namespace FinaroEngine.Library
             {
                 foreach (var trend in item["trends"])
                 {
-                    //Console.WriteLine($"Hello, Name:{trend["name"]} Url:{trend["url"]} Volume:{trend["tweet_volume"]}");
-                    //"name": "#ChainedToTheRhythm", "url": "http://twitter.com/search?q=%23ChainedToTheRhythm", "promoted_content": null, "query": "%23ChainedToTheRhythm", "tweet_volume": 48857
-                    //Console.WriteLine($"Name:{trend["name"]} Volume:{trend["tweet_volume"]}");
+                    try
+                    {
+                        int volume = 0;
+                        Int32.TryParse(trend["tweet_volume"].ToString(), out volume);
+                        List<SqlParameter> sparams = new List<SqlParameter>();
 
-                    int volume = 0;
-                    Int32.TryParse(trend["tweet_volume"].ToString(), out volume);
-                    List<SqlParameter> sparams = new List<SqlParameter>();
-                    sparams.Add(new SqlParameter("@NAME", trend["name"].ToString()));
-                    sparams.Add(new SqlParameter("@URL", trend["url"].ToString()));
-                    sparams.Add(new SqlParameter("@TWEETVOLUME", volume));
-                    FinaroEngine.Library.DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sparams);
+                        string trendName = trend["name"].ToString();
+                        var tweets = GetTweetsAsync(trendName, 10, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
+                        double? score = GetVaderSentAvgAsync(tweets.Result).Result;
+
+                        sparams.Add(new SqlParameter("@NAME", trendName));
+                        sparams.Add(new SqlParameter("@URL", trend["url"].ToString()));
+                        sparams.Add(new SqlParameter("@TWEETVOLUME", volume));
+                        sparams.Add(new SqlParameter("@AVGSENTIMENT", score));
+                        FinaroEngine.Library.DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sparams);
+                    }
+                    catch(Exception e)
+                    {
+                        //Console.WriteLine(e.ToString());
+                    }
                 }
             }
         }
@@ -87,31 +95,45 @@ namespace FinaroEngine.Library
 
             foreach (JObject item in stuff["statuses"])
             {
-                tweets.Add(item["text"].ToString());
+                tweets.Add(Sanitize(item["text"].ToString(), tweet));
             }
 
             return tweets;
-        }
+        }        
 
-        public static async Task<double?> GetSentimentAvgAsync(string endpoint, string key, List<string> texts)
+        public static async Task<double?> GetVaderSentAvgAsync(List<string> tweets)
         {
-            var credentials = new ApiKeyServiceClientCredentials(key);
-            var client = new TextAnalyticsClient(credentials)
-            {
-                Endpoint = endpoint
-            };
+            SentimentIntensityAnalyzer analyzer = new SentimentIntensityAnalyzer();
+            double? retval = 0;
+            int count = tweets.Count;
 
-            int count = 1;
-            List<MultiLanguageInput> inputs = new List<MultiLanguageInput>();
-            foreach (string text in texts)
+            foreach (string text in tweets)
             {
-                inputs.Add(new MultiLanguageInput("en", (count++).ToString(), text));
+                var results = analyzer.PolarityScores(text);
+
+                if (results.Compound == 0 && count > 0)
+                    count--;
+                else
+                    retval += (results.Compound > 0) ? results.Compound : results.Neutral;
             }
-            var inputDocuments = new MultiLanguageBatchInput(inputs);
-            var result = await client.SentimentAsync(false, inputDocuments);
-            var avgScore = result.Documents.Average(x => x.Score);
-            return avgScore;
+
+            if (tweets.Count > 0)
+                retval = retval / count;
+
+            return retval;
         }
 
+        private static string Sanitize(string raw, string tweet)
+        {
+            string cleanedText = Regex.Replace(raw, @"http[^\s]+", "");
+            cleanedText = cleanedText.Replace(tweet, "");            
+            cleanedText = cleanedText.Replace(Environment.NewLine, "");
+            cleanedText = Regex.Replace(cleanedText, @"\r\n?|\n", "");
+            cleanedText = Regex.Replace(cleanedText, @"#\w+", "");
+            cleanedText = Regex.Replace(cleanedText, @"@\w+", "");
+            cleanedText = cleanedText.Replace("RT :", "");
+            cleanedText = Regex.Replace(cleanedText, @"/[^A-Za-z0-9\s!?\u0000-\u0080\u0082]/g,''", "");
+            return cleanedText.Trim();
+        }
     }
 }
