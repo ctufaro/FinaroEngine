@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using FinaroEngine.Library;
+using System.Web;
 
 namespace FinaroEngine.Functions
 {
@@ -23,6 +24,15 @@ namespace FinaroEngine.Functions
             log.LogInformation("Getting all Trends");            
             Trends trends = new Trends(GetOptions());
             return new OkObjectResult(trends.GetTrendsJSON());
+        }
+
+        [FunctionName("getTweetVol")]
+        public static async Task<IActionResult> GetTweetVol([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trends/{name}")]HttpRequest req, ILogger log, string name)
+        {
+            log.LogInformation("Getting Tweet Volume");
+            TweetVols tweetVols = new TweetVols(GetOptions());
+            name = HttpUtility.HtmlDecode(name);
+            return new OkObjectResult(tweetVols.GetTweetVolJSON(name));
         }
 
 
