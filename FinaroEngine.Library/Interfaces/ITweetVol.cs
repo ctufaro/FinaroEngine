@@ -6,7 +6,7 @@ namespace FinaroEngine.Library
 {
     public interface ITweetVol
     {
-        List<TweetVol> GetTweetVol(string name);
+        TweetVol GetTweetVol(string name);
         string GetTweetVolJSON(string name);
     }
 }

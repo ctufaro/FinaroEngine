@@ -9,9 +9,9 @@ namespace FinaroEngine.Library
         public int Id { get; set; }
         public string Name { get; set; }
         public string URL { get; set; }
-        public int TweetVolume { get; set; }
-        public DateTime LoadDate { get; set; }
+        public List<int> TweetVolume { get; set; }
+        public List<string> LoadDate { get; set; }
         public bool UserEntry { get; set; }
-        public double? AvgSentiment { get; set; }
+        public List<double?> AvgSentiment { get; set; }
     }
 }

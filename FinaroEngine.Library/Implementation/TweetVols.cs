@@ -17,23 +17,20 @@ namespace FinaroEngine.Library
             this.opts = opts;
         }
 
-        public List<TweetVol> GetTweetVol(string name)
+        public TweetVol GetTweetVol(string name)
         {
             List<SqlParameter> prms = new List<SqlParameter> { new SqlParameter("@NAME", name) };
             var dt = DBUtility.GetDataTable(opts.ConnectionString, "spSelectTrendDataTweetVol", prms);
-            List<TweetVol> tweetVols = new List<TweetVol>();
+            TweetVol tweetVols = new TweetVol();
+            tweetVols.Name = name;
+            tweetVols.LoadDate = new List<string>();
+            tweetVols.TweetVolume = new List<int>();
+            tweetVols.AvgSentiment = new List<double?>();
             foreach (DataRow dr in dt.Rows)
             {
-                tweetVols.Add(new TweetVol
-                {
-                    Id = Convert.ToInt32(dr["Id"]),
-                    Name = dr["Name"].ToString(),
-                    URL = dr["URL"].ToString(),
-                    TweetVolume = Convert.ToInt32(dr["TweetVolume"]),
-                    LoadDate = Convert.ToDateTime(dr["LoadDate"]),
-                    UserEntry = Convert.ToBoolean(dr["UserEntry"]),
-                    AvgSentiment = Convert.ToDouble(dr["AvgSentiment"])
-                });
+                tweetVols.LoadDate.Add(Convert.ToDateTime(dr["LoadDate"]).ToString("MM'/'dd HH:mm"));
+                tweetVols.TweetVolume.Add(Convert.ToInt32(dr["TweetVolume"]));
+                tweetVols.AvgSentiment.Add(Convert.ToDouble(dr["AvgSentiment"]));   
             }
             return tweetVols;
         }
