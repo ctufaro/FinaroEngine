@@ -20,7 +20,7 @@ namespace FinaroEngine.Library
         public TweetVol GetTweetVol(string name)
         {
             List<SqlParameter> prms = new List<SqlParameter> { new SqlParameter("@NAME", name) };
-            var dt = DBUtility.GetDataTable(opts.ConnectionString, "spSelectTrendDataTweetVol", prms);
+            var dt = DBUtility.GetDataTable(opts.ConnectionString, "spSelectTrendData", prms);
             TweetVol tweetVols = new TweetVol();
             tweetVols.Name = name;
             tweetVols.LoadDate = new List<string>();
@@ -28,7 +28,7 @@ namespace FinaroEngine.Library
             tweetVols.AvgSentiment = new List<double?>();
             foreach (DataRow dr in dt.Rows)
             {
-                tweetVols.LoadDate.Add(Convert.ToDateTime(dr["LoadDate"]).ToString("MM'/'dd HH:mm"));
+                tweetVols.LoadDate.Add(Convert.ToDateTime(dr["LoadDate"]).ToString("M'/'dd HH:mm"));
                 tweetVols.TweetVolume.Add(Convert.ToInt32(dr["TweetVolume"]));
                 tweetVols.AvgSentiment.Add(Convert.ToDouble(dr["AvgSentiment"]));   
             }
