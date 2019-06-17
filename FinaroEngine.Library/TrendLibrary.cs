@@ -114,7 +114,7 @@ namespace FinaroEngine.Library
                 if (results.Compound == 0 && count > 0)
                     count--;
                 else
-                    retval += (results.Compound > 0) ? results.Compound : results.Neutral;
+                    retval += results.Compound;
             }
 
             if (tweets.Count > 0)
