@@ -55,26 +55,26 @@ namespace FinaroEngine.Functions
         }
 
 
-        //[FunctionName("loadTrends")]
-        //public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
-        //{
-        //    string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
-        //    string twitterConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
-        //    string twitterConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
-        //    string twitterAccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
-        //    string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
+        [FunctionName("loadTrends")]
+        public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
+        {
+            string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
+            string twitterConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
+            string twitterConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
+            string twitterAccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
+            string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
 
-        //    TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
-        //    log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
-        //}
+            TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
+            log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
+        }
 
-        //[FunctionName("clearTrends")]
-        //public static void ClearTrends([TimerTrigger("0 0 */24 * * *")]TimerInfo myTimer, ILogger log)
-        //{
-        //    string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
-        //    TrendLibrary.ClearTrends(sqlConnectionString);
-        //    log.LogInformation($"C# ClearTrends Timer trigger function executed at: {DateTime.Now}");
-        //}
+        [FunctionName("clearTrends")]
+        public static void ClearTrends([TimerTrigger("0 0 */24 * * *")]TimerInfo myTimer, ILogger log)
+        {
+            string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
+            TrendLibrary.ClearTrends(sqlConnectionString);
+            log.LogInformation($"C# ClearTrends Timer trigger function executed at: {DateTime.Now}");
+        }
 
         public static Options GetOptions()
         {

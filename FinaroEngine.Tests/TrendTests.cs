@@ -17,7 +17,7 @@ namespace FinaroEngine.Tests
         public void SelectListOfTrendsFromDatabase()
         {
             Trends trends = new Trends(opts);
-            var list = trends.GetTrends();
+            var list = trends.GetTrends(1);
             Assert.NotNull(list);
         }
 
@@ -25,7 +25,7 @@ namespace FinaroEngine.Tests
         public void SelectJSONResultOfTrendsFromDatabase()
         {
             Trends trends = new Trends(opts);
-            var json = trends.GetTrendsJSON();
+            var json = trends.GetTrendsJSON(1);
             Assert.NotNull(json);
         }
     }
