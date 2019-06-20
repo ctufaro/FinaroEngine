@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FinaroEngine.Library
 {
@@ -39,6 +40,20 @@ namespace FinaroEngine.Library
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddRange(prm.ToArray());
                     return cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public async static Task<int> ExecuteQueryAsync(string connectionstring, string storedProcedure, List<SqlParameter> prm)
+        {
+            using (var con = new SqlConnection(connectionstring))
+            {
+                using (var cmd = new SqlCommand(storedProcedure, con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddRange(prm.ToArray());
+                    return await cmd.ExecuteNonQueryAsync();
                 }
             }
         }

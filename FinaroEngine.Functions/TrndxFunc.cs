@@ -19,15 +19,34 @@ namespace FinaroEngine.Functions
         /// </summary>
 
         [FunctionName("getTrends")]
-        public static async Task<IActionResult> GetTrends([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trends")]HttpRequest req, ILogger log)
+        public static async Task<IActionResult> GetTrends([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trends/{filter}")]HttpRequest req, ILogger log, int filter)
         {
             log.LogInformation("Getting all Trends");            
             Trends trends = new Trends(GetOptions());
-            return new OkObjectResult(trends.GetTrendsJSON());
+            return new OkObjectResult(trends.GetTrendsJSON(filter));
+        }
+
+        [FunctionName("insertUserTrend")]
+        public static async Task<IActionResult> InsertUserTrend([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "trends")]HttpRequest req, ILogger log)
+        {
+            log.LogInformation("Inserting User Trend");
+            string response = new StreamReader(req.Body).ReadToEnd();//int userId, string trendName
+            var resp = JsonConvert.DeserializeAnonymousType(response, new { UserId = 0, TrendName = "" });
+            Options opts = GetOptions();
+            Trends trends = new Trends(GetOptions());
+            try
+            {
+                await trends.InsertUserTrend(resp.UserId, resp.TrendName);
+                return new OkResult();
+            }
+            catch
+            {
+                return new BadRequestResult();
+            }
         }
 
         [FunctionName("getTweetVol")]
-        public static async Task<IActionResult> GetTweetVol([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trends/{name}")]HttpRequest req, ILogger log, string name)
+        public static async Task<IActionResult> GetTweetVol([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tweets/volume/{name}")]HttpRequest req, ILogger log, string name)
         {
             log.LogInformation("Getting Tweet Volume");
             TweetVols tweetVols = new TweetVols(GetOptions());
@@ -36,26 +55,26 @@ namespace FinaroEngine.Functions
         }
 
 
-        [FunctionName("loadTrends")]
-        public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
-        {
-            string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
-            string twitterConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
-            string twitterConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
-            string twitterAccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
-            string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
+        //[FunctionName("loadTrends")]
+        //public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
+        //{
+        //    string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
+        //    string twitterConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
+        //    string twitterConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
+        //    string twitterAccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
+        //    string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
 
-            TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
-            log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
-        }
+        //    TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
+        //    log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
+        //}
 
-        [FunctionName("clearTrends")]
-        public static void ClearTrends([TimerTrigger("0 0 */24 * * *")]TimerInfo myTimer, ILogger log)
-        {
-            string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
-            TrendLibrary.ClearTrends(sqlConnectionString);
-            log.LogInformation($"C# ClearTrends Timer trigger function executed at: {DateTime.Now}");
-        }
+        //[FunctionName("clearTrends")]
+        //public static void ClearTrends([TimerTrigger("0 0 */24 * * *")]TimerInfo myTimer, ILogger log)
+        //{
+        //    string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
+        //    TrendLibrary.ClearTrends(sqlConnectionString);
+        //    log.LogInformation($"C# ClearTrends Timer trigger function executed at: {DateTime.Now}");
+        //}
 
         public static Options GetOptions()
         {

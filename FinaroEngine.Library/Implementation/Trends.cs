@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FinaroEngine.Library
 {
@@ -16,9 +18,11 @@ namespace FinaroEngine.Library
             this.opts = opts;
         }
 
-        public List<Trend> GetTrends()
+        public List<Trend> GetTrends(int filter)
         {
-            var dt = DBUtility.GetDataTable(opts.ConnectionString, "spSelectTrends", null);
+            List<SqlParameter> paras = new List<SqlParameter>();
+            paras.Add(new SqlParameter("@USERENTRY", filter));
+            var dt = DBUtility.GetDataTable(opts.ConnectionString, "spSelectTrends", paras);
             List<Trend> trends = new List<Trend>();
             foreach (DataRow dr in dt.Rows)
             {
@@ -49,9 +53,17 @@ namespace FinaroEngine.Library
             return trends;
         }
 
-        public string GetTrendsJSON()
+        public async Task InsertUserTrend(int userId, string trendName)
         {
-            return JsonConvert.SerializeObject(GetTrends());
+            List<SqlParameter> paras = new List<SqlParameter>();
+            paras.Add(new SqlParameter("@USERID", userId));
+            paras.Add(new SqlParameter("@NAME", trendName));
+            await DBUtility.ExecuteQueryAsync(opts.ConnectionString, "spInsertUserTrend", paras);      
+        }
+
+        public string GetTrendsJSON(int filter)
+        {
+            return JsonConvert.SerializeObject(GetTrends(filter));
         }
     }
 }
