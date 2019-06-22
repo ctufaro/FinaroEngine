@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using VaderSharp;
 
 namespace FinaroEngine.Library
@@ -78,7 +79,7 @@ namespace FinaroEngine.Library
                 int fakeVolume = Utility.RandomNumber(10000, 500000);
 
                 List<SqlParameter> sparams = new List<SqlParameter>();
-                sparams.Add(new SqlParameter("@NAME", trendName));
+                sparams.Add(new SqlParameter("@NAME", $"http://twitter.com/search?q={HttpUtility.HtmlEncode(trendName)}"));
                 sparams.Add(new SqlParameter("@URL", ""));//dont have this leave blank
                 sparams.Add(new SqlParameter("@TWEETVOLUME", fakeVolume));//random number
                 sparams.Add(new SqlParameter("@AVGSENTIMENT", score));
