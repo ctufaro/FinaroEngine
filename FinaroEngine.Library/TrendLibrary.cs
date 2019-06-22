@@ -79,8 +79,9 @@ namespace FinaroEngine.Library
                 int fakeVolume = Utility.RandomNumber(10000, 500000);
 
                 List<SqlParameter> sparams = new List<SqlParameter>();
-                sparams.Add(new SqlParameter("@NAME", $"http://twitter.com/search?q={HttpUtility.HtmlEncode(trendName)}"));
-                sparams.Add(new SqlParameter("@URL", ""));//dont have this leave blank
+                string enCodedName = (trendName.StartsWith('#') ? "%23"+trendName.Substring(1) : trendName);
+                sparams.Add(new SqlParameter("@NAME", trendName));
+                sparams.Add(new SqlParameter("@URL", $"http://twitter.com/search?q={HttpUtility.HtmlEncode(enCodedName)}"));
                 sparams.Add(new SqlParameter("@TWEETVOLUME", fakeVolume));//random number
                 sparams.Add(new SqlParameter("@AVGSENTIMENT", score));
                 sparams.Add(new SqlParameter("@USERENTRY", true));
