@@ -15,7 +15,7 @@ using Microsoft.Azure.WebJobs.Host;
 
 namespace FinaroEngine.Functions
 {
-    public static class Function1
+    /*public static class Function1
     {
         [FunctionName("negotiate")]
         public static SignalRConnectionInfo GetSignalRInfo([HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequest req, [SignalRConnectionInfo(HubName = "exchange")] SignalRConnectionInfo connectionInfo)
@@ -237,7 +237,7 @@ namespace FinaroEngine.Functions
         {
             public string ShitText { get; set; }
         }
-        */
+        
 
         public class Order
         {
@@ -256,5 +256,5 @@ namespace FinaroEngine.Functions
             public double Amount { get; set; }
         }
                 
-    }
+    }*/
 }
