@@ -19,15 +19,15 @@ namespace FinaroEngine.Functions
         /// </summary>
 
         [FunctionName("getTrends")]
-        public static async Task<IActionResult> GetTrends([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trends/{filter}")]HttpRequest req, ILogger log, int filter)
+        public static async Task<IActionResult> GetTrends([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trends/filter/{filterId}")]HttpRequest req, ILogger log, int filterId)
         {
             log.LogInformation("Getting all Trends");            
             Trends trends = new Trends(GetOptions());
-            return new OkObjectResult(trends.GetTrendsJSON(filter));
+            return new OkObjectResult(trends.GetTrendsJSON(filterId));
         }
 
         [FunctionName("insertUserTrend")]
-        public static async Task<IActionResult> InsertUserTrend([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "trends")]HttpRequest req, ILogger log)
+        public static async Task<IActionResult> InsertUserTrend([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "trends/user")]HttpRequest req, ILogger log)
         {
             log.LogInformation("Inserting User Trend");
             string response = new StreamReader(req.Body).ReadToEnd();//int userId, string trendName
@@ -46,7 +46,7 @@ namespace FinaroEngine.Functions
         }
 
         [FunctionName("getTweetVol")]
-        public static async Task<IActionResult> GetTweetVol([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tweets/volume/{name}")]HttpRequest req, ILogger log, string name)
+        public static async Task<IActionResult> GetTweetVol([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tweets/{name}")]HttpRequest req, ILogger log, string name)
         {
             log.LogInformation("Getting Tweet Volume");
             TweetVols tweetVols = new TweetVols(GetOptions());
@@ -78,7 +78,7 @@ namespace FinaroEngine.Functions
         //}
 
         [FunctionName("loadTrendsDemand")]
-        public static void LoadTrendsManually([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trends/load/new")]HttpRequest req, ILogger log)
+        public static void LoadTrendsManually([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "utils/trends/load")]HttpRequest req, ILogger log)
         {
             string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
             string twitterConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
@@ -92,7 +92,7 @@ namespace FinaroEngine.Functions
         }
 
         [FunctionName("clearTrendsDemand")]
-        public static void ClearTrendsManually([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trends/clear")]HttpRequest req, ILogger log)
+        public static void ClearTrendsManually([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "utils/trends/clear")]HttpRequest req, ILogger log)
         {
             string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
             TrendLibrary.ClearTrends(sqlConnectionString);
