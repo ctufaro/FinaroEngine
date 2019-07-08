@@ -37,7 +37,7 @@ namespace FinaroEngine.Loader
             //}
 
             string content = await TrendLibrary.LoadTweetVolumeAsync("Trump2019", twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
-            TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, (err) => Console.WriteLine(err));
+            //TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, (err) => Console.WriteLine(err));
             TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, (err) => Console.WriteLine(err));
         }        
         

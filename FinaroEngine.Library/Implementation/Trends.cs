@@ -27,8 +27,8 @@ namespace FinaroEngine.Library
             foreach (DataRow dr in dt.Rows)
             {
                 decimal[] randomPrices = new decimal[5] { Utility.RandomNumber(1,100), Utility.RandomNumber(1, 100), Utility.RandomNumber(1, 100), Utility.RandomNumber(1, 100), Utility.RandomNumber(1, 100) };
-                decimal lastPrice = randomPrices[4];
-                bool hasGain = randomPrices[4] > randomPrices[3] ? true : false;
+                decimal price = Convert.ToDecimal(dr["Price"]);
+                bool hasGain = price > Convert.ToDecimal(dr["LastPrice"]) ? true : false;
                 string myColor = hasGain ? "success" : "danger";
                 string myCSS = hasGain ? "btn btn-outline-success btn-sm" : "btn btn-outline-danger btn-sm";
                 string[] myGradient = hasGain ? new string[] { "#29D3A5", "#fff" } : new string[] { "#FF4D29", "#fff" };
@@ -45,9 +45,9 @@ namespace FinaroEngine.Library
                     Faved = false,
                     Notify = false,
                     Gradient = myGradient,
-                    Price = lastPrice,
-                    PriceText = lastPrice.ToString("C"),
-                    Prices = randomPrices
+                    Price = price,
+                    PriceText = price.ToString("C"),
+                    Prices = randomPrices //TODO: fix this
                 });
             }
             return trends;
