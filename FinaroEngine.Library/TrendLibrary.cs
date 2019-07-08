@@ -41,15 +41,22 @@ namespace FinaroEngine.Library
             {
                 foreach (var trend in item["trends"])
                 {
+                    string trendName = "";
+                    double? score = 0;
+
                     try
                     {
                         int volume = 0;
                         Int32.TryParse(trend["tweet_volume"].ToString(), out volume);
                         List<SqlParameter> sparams = new List<SqlParameter>();
 
-                        string trendName = trend["name"].ToString();
+                        trendName = trend["name"].ToString();
                         var tweets = GetTweetsAsync(trendName, 10, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
-                        double? score = GetVaderSentAvgAsync(tweets.Result).Result;
+
+                        if (tweets==null)
+                            continue;
+
+                        score = GetVaderSentAvgAsync(tweets.Result).Result;
 
                         sparams.Add(new SqlParameter("@NAME", trendName));
                         sparams.Add(new SqlParameter("@URL", trend["url"].ToString()));
@@ -60,7 +67,7 @@ namespace FinaroEngine.Library
                     }
                     catch(Exception e)
                     {
-                        LogError(e.ToString());
+                        LogError($"Trend:{trendName} Score:{score} {e.ToString()}");
                     }
                 }
             }
@@ -140,6 +147,10 @@ namespace FinaroEngine.Library
             IRestResponse response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
 
             var content = response.Content; // raw content as string
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                return null;
+            
             dynamic stuff = JsonConvert.DeserializeObject(content);
 
             foreach (JObject item in stuff["statuses"])
@@ -151,10 +162,11 @@ namespace FinaroEngine.Library
         }        
 
         public static async Task<double?> GetVaderSentAvgAsync(List<string> tweets)
-        {
-            SentimentIntensityAnalyzer analyzer = new SentimentIntensityAnalyzer();
+        {            
+            double temp;
             double? retval = 0;
             int count = tweets.Count;
+            SentimentIntensityAnalyzer analyzer = new SentimentIntensityAnalyzer();
 
             foreach (string text in tweets)
             {
@@ -166,8 +178,21 @@ namespace FinaroEngine.Library
                     retval += results.Compound;
             }
 
+            // SAFE GUARD AGAINST ANY ILLEGAL RETURN VALUES
             if (tweets.Count > 0)
-                retval = retval / count;
+            {
+                try
+                {
+                    retval = retval / count;
+                }
+                catch
+                {
+                    return 0;
+                }
+
+                if (retval == Double.NaN || !Double.TryParse(retval.ToString(), out temp))
+                    retval = 0;                
+            }
 
             return retval;
         }

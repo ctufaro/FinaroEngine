@@ -26,12 +26,8 @@ namespace FinaroEngine.Library
             List<Trend> trends = new List<Trend>();
             foreach (DataRow dr in dt.Rows)
             {
-                decimal[] randomPrices = new decimal[5] { Utility.RandomNumber(1,100), Utility.RandomNumber(1, 100), Utility.RandomNumber(1, 100), Utility.RandomNumber(1, 100), Utility.RandomNumber(1, 100) };
                 decimal price = Convert.ToDecimal(dr["Price"]);
                 bool hasGain = price > Convert.ToDecimal(dr["LastPrice"]) ? true : false;
-                string myColor = hasGain ? "success" : "danger";
-                string myCSS = hasGain ? "btn btn-outline-success btn-sm" : "btn btn-outline-danger btn-sm";
-                string[] myGradient = hasGain ? new string[] { "#29D3A5", "#fff" } : new string[] { "#FF4D29", "#fff" };
 
                 trends.Add(new Trend
                 {
@@ -40,14 +36,13 @@ namespace FinaroEngine.Library
                     Name = dr["Name"].ToString(),
                     TweetVolume = Convert.ToInt32(dr["TweetVolume"]),
                     URL = dr["URL"].ToString(),
-                    Color = myColor,
-                    CSS = myCSS,
                     Faved = false,
                     Notify = false,
-                    Gradient = myGradient,
                     Price = price,
+                    ChangeIn = Convert.ToDecimal(dr["ChangeIn"]),
                     PriceText = price.ToString("C"),
-                    Prices = randomPrices //TODO: fix this
+                    Prices = Utility.ConvertToDecArray(dr["PriceHistory"].ToString(), false),
+                    Gains = hasGain
                 });
             }
             return trends;
@@ -64,6 +59,6 @@ namespace FinaroEngine.Library
         public string GetTrendsJSON(int filter)
         {
             return JsonConvert.SerializeObject(GetTrends(filter));
-        }
+        }        
     }
 }

@@ -12,11 +12,10 @@ namespace FinaroEngine.Library
         public int TweetVolume { get; set; }
         public DateTime LoadDate { get; set; }
         public decimal Price { get; set; }
+        public decimal ChangeIn { get; set; }
         public string PriceText { get; set; }
         public decimal[] Prices { get; set; }
-        public string Color { get; set; }
-        public string CSS { get; set; }
-        public string[] Gradient { get; set; }
+        public bool Gains { get; set; }
         public bool Notify { get; set; }
         public bool Faved { get; set; }
 

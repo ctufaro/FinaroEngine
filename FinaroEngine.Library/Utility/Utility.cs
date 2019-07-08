@@ -36,5 +36,43 @@ namespace FinaroEngine.Library
                 return newDate;
             }
         }
+
+
+        public static decimal[] ConvertToDecArray(string priceHistory, bool exportAll)
+        {
+            int totalEntries = 5;
+            priceHistory = priceHistory.Trim();
+            priceHistory = (priceHistory.EndsWith(',')) ? priceHistory.Remove(priceHistory.Length - 1) : priceHistory;
+            decimal[] retval = new decimal[5] { 0, 0, 0, 0, 0 };
+            if (priceHistory == null)
+            {
+                return retval;
+            }
+            try
+            {
+                var array = Array.ConvertAll(priceHistory.Split(','), Decimal.Parse);
+                
+                // <= 5 OR  exportAll is true
+                if(array.Length <= totalEntries || exportAll)
+                {
+                    return array;
+                }
+                
+                // > 5
+                else if (array.Length > totalEntries)
+                {
+                    int start = array.Length - totalEntries;
+                    decimal[] newValues = new ArraySegment<decimal>(array, start, totalEntries).ToArray();
+                    return newValues;
+                }
+                
+                return array;
+            }
+            catch(Exception e)
+            {
+                string error = e.ToString();
+            }
+            return retval;
+        }
     }
 }

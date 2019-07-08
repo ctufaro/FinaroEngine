@@ -55,6 +55,15 @@ namespace FinaroEngine.Functions
         }
 
 
+        [FunctionName("getPriceVol")]
+        public static async Task<IActionResult> GetPriceVol([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "pricevol/{name}")]HttpRequest req, ILogger log, string name)
+        {
+            log.LogInformation("Getting Price & Volume");
+            PriceVols priceVols= new PriceVols(GetOptions());
+            name = HttpUtility.HtmlDecode(name);
+            return new OkObjectResult(priceVols.GetPriceVolJSON(name));
+        }
+
         [FunctionName("loadTrends")]
         public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
         {
@@ -65,7 +74,7 @@ namespace FinaroEngine.Functions
             string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
 
             TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
-            TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
+            //TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
             log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
         }
 
@@ -87,7 +96,7 @@ namespace FinaroEngine.Functions
             string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
 
             TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
-            TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
+            //TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
             log.LogInformation($"C# LoadTrends HTTP trigger function executed at: {DateTime.Now}");
         }
 
