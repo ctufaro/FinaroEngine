@@ -30,6 +30,30 @@ namespace FinaroEngine.Library
             }
         }
 
+        public static Task<DataTable> GetDataTableAsync(string connectionstring, string storedProcedure, List<SqlParameter> prm)
+        {
+            return Task.Run(() =>
+            {
+                using (SqlConnection con = new SqlConnection(connectionstring))
+                {
+                    using (SqlCommand cmd = new SqlCommand(storedProcedure, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        if (prm != null)
+                            cmd.Parameters.AddRange(prm.ToArray());
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            using (DataTable dt = new DataTable())
+                            {
+                                sda.Fill(dt);
+                                return dt;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         public static int ExecuteQuery(string connectionstring, string storedProcedure, List<SqlParameter> prm)
         {
             using (var con = new SqlConnection(connectionstring))
