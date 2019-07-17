@@ -16,10 +16,11 @@ namespace FinaroEngine.Library
 
         public async Task CreateUser(string email, string username, string password, string mobile, string publickey, string privatekey)
         {
+            string hashedPassed = Utility.GetStringSha256Hash(password);
             List<SqlParameter> prms = new List<SqlParameter> {
                 new SqlParameter("@EMAIL",email),
                 new SqlParameter("@USERNAME", username),
-                new SqlParameter("@PASSWORD", password),
+                new SqlParameter("@PASSWORD", hashedPassed),
                 new SqlParameter("@MOBILE", mobile),
                 new SqlParameter("@PUBLICKEY", publickey),                
                 new SqlParameter("@PRIVATEKEY", privatekey)
@@ -29,9 +30,10 @@ namespace FinaroEngine.Library
 
         public async Task<bool> LoginUser(string username, string password)
         {
+            string hashedPassed = Utility.GetStringSha256Hash(password);
             List<SqlParameter> prms = new List<SqlParameter> {
                 new SqlParameter("@USERNAME", username),
-                new SqlParameter("@PASSWORD", password)
+                new SqlParameter("@PASSWORD", hashedPassed)
             };
 
             var dt = await DBUtility.GetDataTableAsync(opts.ConnectionString, "spSelectUser", prms);
