@@ -197,6 +197,13 @@ namespace FinaroEngine.Library
             return retval;
         }
 
+        public static async Task<double?> GetVaderAsync(string text)
+        {
+            SentimentIntensityAnalyzer analyzer = new SentimentIntensityAnalyzer();
+            var results = analyzer.PolarityScores(text);
+            return results.Compound;;
+        }
+
         private static string Sanitize(string raw, string tweet)
         {
             string cleanedText = Regex.Replace(raw, @"http[^\s]+", "");

@@ -36,7 +36,17 @@ namespace FinaroEngine.Functions
             Users users = new Users(opts);
             try
             {
-                await users.CreateUser(resp.email, resp.username, resp.password, resp.mobile, resp.publicKey, resp.privateKey);
+                bool exists = await users.EmailExists(resp.email);
+                if (!exists)
+                    await users.CreateUser(resp.email, resp.username, resp.password, resp.mobile, resp.publicKey, resp.privateKey);
+                else
+                {
+                    // EMAIL EXISTS
+                    return new ObjectResult(new { title = "Signup Error", message = "This email address has already been registered." })
+                    {
+                        StatusCode = 500
+                    };
+                }
                 return new OkResult();
             }
             catch
@@ -59,7 +69,12 @@ namespace FinaroEngine.Functions
                 if (exists)
                     return new OkResult();
                 else
-                    return new NotFoundResult();
+                {
+                    // BAD CREDENTIALS
+                    return new ObjectResult(new { title = "Login Error", message = "Incorrect Username/Password" }) {
+                        StatusCode = 500
+                    };
+                }
             }
             catch
             {
@@ -105,19 +120,19 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(priceVols.GetPriceVolJSON(name));
         }
 
-        [FunctionName("loadTrends")]
-        public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
-        {
-            string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
-            string twitterConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
-            string twitterConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
-            string twitterAccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
-            string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
+        //[FunctionName("loadTrends")]
+        //public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
+        //{
+        //    string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
+        //    string twitterConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
+        //    string twitterConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
+        //    string twitterAccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
+        //    string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
 
-            TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
-            //TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
-            log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
-        }
+        //    TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
+        //    //TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
+        //    log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
+        //}
 
         //[FunctionName("clearTrends")]
         //public static void ClearTrends([TimerTrigger("0 0 */24 * * *")]TimerInfo myTimer, ILogger log)

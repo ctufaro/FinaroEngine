@@ -27,14 +27,14 @@ namespace FinaroEngine.Loader
             string twitterAccessToken = config["TwitterAccessToken"];
             string twitterAccessTokenSecret = config["TwitterAccessTokenSecret"];
 
-            //while (true)
-            //{
-            //    Console.Write("Enter Text: ");
-            //    string q = Console.ReadLine();
-            //    var tweets = await TrendLibrary.GetTweetsAsync(q, 10, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
-            //    var retval = await TrendLibrary.GetVaderSentAvgAsync(tweets);
-            //    Console.WriteLine($"({q}) Score: {retval}");                
-            //}
+            while (true)
+            {
+                Console.Write("Enter Text: ");
+                string q = Console.ReadLine();
+                //var tweets = await TrendLibrary.GetTweetsAsync(q, 10, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
+                var retval = await TrendLibrary.GetVaderAsync(q);
+                Console.WriteLine($"({q}) Score: {retval}");
+            }
 
             //string content = await TrendLibrary.LoadTweetVolumeAsync("Trump2019", twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
             //TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, (err) => Console.WriteLine(err));

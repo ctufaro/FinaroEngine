@@ -39,5 +39,15 @@ namespace FinaroEngine.Library
             var dt = await DBUtility.GetDataTableAsync(opts.ConnectionString, "spSelectUser", prms);
             return dt.Rows.Count > 0;
         }
+
+        public async Task<bool> EmailExists(string email)
+        {
+            List<SqlParameter> prms = new List<SqlParameter> {
+                new SqlParameter("@EMAIL", email)
+            };
+
+            var dt = await DBUtility.GetDataTableAsync(opts.ConnectionString, "spEmailExists", prms);
+            return dt.Rows.Count > 0;
+        }
     }
 }
