@@ -11,6 +11,8 @@ namespace FinaroEngine.Library
         public string Username { get; set; }
         public string Password { get; set; }
         public string MobileNumber { get; set; }
+        public string Avatar { get; set; }
+        public decimal Balance { get; set; }
         public string PublicKey { get; set; }
         public string PrivateKey { get; set; }
     }

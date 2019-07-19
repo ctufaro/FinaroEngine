@@ -27,7 +27,7 @@ namespace FinaroEngine.Functions
         }
 
         [FunctionName("userSignup")]
-        public static async Task<IActionResult> InsertUser([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "signup/user")]HttpRequest req, ILogger log)
+        public static async Task<IActionResult> SignUpUser([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "signup/user")]HttpRequest req, ILogger log)
         {
             log.LogInformation("Signing Up User");
             string response = new StreamReader(req.Body).ReadToEnd();//int userId, string trendName
@@ -37,17 +37,20 @@ namespace FinaroEngine.Functions
             try
             {
                 bool exists = await users.EmailExists(resp.email);
+                // EMAIL DOESNT EXIST, SIGN THEM UP
                 if (!exists)
-                    await users.CreateUser(resp.email, resp.username, resp.password, resp.mobile, resp.publicKey, resp.privateKey);
-                else
                 {
-                    // EMAIL EXISTS
+                    var user = await users.SignUpUser(resp.email, resp.username, resp.password, resp.mobile, resp.publicKey, resp.privateKey);
+                    return new OkObjectResult(user);
+                }
+                // EMAIL EXISTS
+                else
+                {                    
                     return new ObjectResult(new { title = "Signup Error", message = "This email address has already been registered." })
                     {
                         StatusCode = 500
                     };
-                }
-                return new OkResult();
+                }                
             }
             catch
             {
@@ -65,9 +68,11 @@ namespace FinaroEngine.Functions
             Users users = new Users(opts);
             try
             {
-                bool exists = await users.LoginUser(resp.username, resp.password);
-                if (exists)
-                    return new OkResult();
+                var user = await users.LoginUser(resp.username, resp.password);
+                if (user!=null)
+                { 
+                    return new OkObjectResult(user);
+                }
                 else
                 {
                     // BAD CREDENTIALS
@@ -120,7 +125,7 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(priceVols.GetPriceVolJSON(name));
         }
 
-        //[FunctionName("loadTrends")]
+        [FunctionName("loadTrends")]
         public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
         {
             string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
