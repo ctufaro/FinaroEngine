@@ -9,7 +9,7 @@ namespace FinaroEngine.Library
         public int Id { get; set; }
         public Guid OrderId { get; set; }
         public int UserId { get; set; }
-        public int EntityId { get; set; }
+        public int TrendId { get; set; }
         public int TradeTypeId { get; set; }
         public decimal Price { get; set; }
         public DateTime Date { get; set; }

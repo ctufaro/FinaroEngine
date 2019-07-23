@@ -21,9 +21,9 @@ namespace FinaroEngine.SMS
             TwilioClient.Init(accountSid, authToken);
 
             var message = MessageResource.Create(
-                body: "Welcome to the S'Way Exchange!\n\rNEW YORK GIANTS trading @ .70 SWAY Tokens\n\rText 1 to go long 10 Units.",
+                body: "\n\rWelcome to trndx!\n\r#NYCHotDogs trading @ .70 TDX\n\rText 1 to buy 10 shares.",
                 from: new Twilio.Types.PhoneNumber("+19177463774"),
-                to: new Twilio.Types.PhoneNumber("+16463153954")
+                to: new Twilio.Types.PhoneNumber("+15515026572")
             );
 
             Console.WriteLine(message.Sid);

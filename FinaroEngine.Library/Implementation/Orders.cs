@@ -8,18 +8,36 @@ using System.Threading.Tasks;
 
 namespace FinaroEngine.Library
 {
-    public class DBOrder : OptInit<Options>, IOrder
+    public class Orders : OptInit<Options>, IOrder
     {
         private int userId;
         private int entityId;
         private Options opts;
 
-        public DBOrder(Options opts, int userId, int entityId)
+        public Orders(Options opts, int userId)
                     : base(opts)
         {
             this.opts = opts;
             this.userId = userId;
-            this.entityId = entityId;
+        }
+
+        public async Task<bool> InsertOrder(Order newOrder)
+        {
+            var dt = await DBUtility.GetDataTableAsync(opts.ConnectionString, "spSelectUserBalance", new List<SqlParameter> { new SqlParameter("@USERID", this.userId) });
+            var balance = Convert.ToDecimal(dt.Rows[0][0]);
+            decimal amount = newOrder.Price * newOrder.Quantity;
+            decimal newBalance = (newOrder.TradeTypeId == 1) ? balance - amount : balance + amount;
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@ORDERID", newOrder.OrderId));
+            parameters.Add(new SqlParameter("@USERID", newOrder.UserId));
+            parameters.Add(new SqlParameter("@TRENDID", newOrder.TrendId));
+            parameters.Add(new SqlParameter("@TRADETYPEID", newOrder.TradeTypeId));
+            parameters.Add(new SqlParameter("@ACTIVITYID", newOrder.TradeTypeId));
+            parameters.Add(new SqlParameter("@QUANTITY", newOrder.Quantity));
+            parameters.Add(new SqlParameter("@TOTALAMOUNT", amount));
+            parameters.Add(new SqlParameter("@NEWBALANCE", newBalance));
+            await DBUtility.ExecuteQueryAsync(opts.ConnectionString, "spInsertOrder", null);
+            return true;
         }
 
         public MarketOrders AddNewOrder(Order newOrder, IContractCall contract)
@@ -95,7 +113,7 @@ namespace FinaroEngine.Library
                 order.Id = Convert.ToInt32(dr["Id"]);                
                 order.OrderId = Guid.Parse(dr["OrderId"].ToString());
                 order.UserId = Convert.ToInt32(dr["UserId"]);
-                order.EntityId = Convert.ToInt32(dr["EntityId"]);
+                order.TrendId = Convert.ToInt32(dr["TrendId"]);
                 order.TradeTypeId = Convert.ToInt32(dr["TradeTypeId"]);
                 order.Price = Convert.ToDecimal(dr["Price"]);
                 order.Date = Convert.ToDateTime(dr["Date"]);
@@ -238,7 +256,6 @@ namespace FinaroEngine.Library
 
             return result;
         }
-
 
         public void MarginTransfer(Order newOrder, int userId, int entityId, IContractCall contract, Guid orderId)
         {

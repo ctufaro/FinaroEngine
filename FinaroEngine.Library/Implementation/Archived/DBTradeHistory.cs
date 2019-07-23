@@ -34,7 +34,7 @@ namespace FinaroEngine.Library
                 order.Id = Convert.ToInt32(dr["Id"]);
                 order.OrderId = Guid.Parse(dr["OrderId"].ToString());
                 order.UserId = Convert.ToInt32(dr["UserId"]);
-                order.EntityId = Convert.ToInt32(dr["EntityId"]);
+                order.TrendId = Convert.ToInt32(dr["TrendId"]);
                 order.TradeTypeId = Convert.ToInt32(dr["TradeTypeId"]);
                 order.Price = Convert.ToDecimal(dr["Price"]);
                 order.Date = Convert.ToDateTime(dr["Date"]);

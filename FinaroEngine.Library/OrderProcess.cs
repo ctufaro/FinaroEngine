@@ -17,7 +17,7 @@ namespace FinaroEngine.Library
 
         public OrderProcess(Options opts, int userId, int entityId)
         {
-            order = new DBOrder(opts, userId, entityId);
+            order = new Orders(opts, userId, entityId);
             market = new DBMarket(opts, userId, entityId);
             history = new DBTradeHistory(opts, userId, entityId);
             myOrder = new DBMyOrder(opts, userId);

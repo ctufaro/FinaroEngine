@@ -106,6 +106,37 @@ namespace FinaroEngine.Functions
             }
         }
 
+        [FunctionName("insertOrder")]
+        public static async Task<IActionResult> InsertOrder([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "orders/new")]HttpRequest req, ILogger log)
+        {
+            log.LogInformation("Creating Order");
+            string response = new StreamReader(req.Body).ReadToEnd();            
+            var neworder = new JsonSerializer().Deserialize<Order>(new JsonTextReader(new StreamReader(req.Body)));
+            Options opts = GetOptions();
+            Orders orders = new Orders(opts, neworder.UserId);
+            try
+            {
+                var retval = await orders.InsertOrder(neworder);
+                if (retval)
+                {
+                    return new OkResult();
+                }
+                else
+                {
+                    // BAD CREDENTIALS
+                    return new ObjectResult(new { title = "Uh-oh!", message = "Error Creating Order" })
+                    {
+                        StatusCode = 500
+                    };
+                }
+            }
+            catch
+            {
+                return new BadRequestResult();
+            }
+        }
+
+
         [FunctionName("getTweetVol")]
         public static async Task<IActionResult> GetTweetVol([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tweets/{name}")]HttpRequest req, ILogger log, string name)
         {
