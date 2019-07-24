@@ -10,12 +10,19 @@ namespace FinaroEngine.Library
         public Guid OrderId { get; set; }
         public int UserId { get; set; }
         public int TrendId { get; set; }
+        public string TrendName { get; set; }
         public int TradeTypeId { get; set; }
         public decimal Price { get; set; }
         public DateTime Date { get; set; }
-        public int Quantity { get; set; }
+        public decimal Quantity { get; set; }
         public int UnsetQuantity { get; set; }
         public string PublicKey { get; set; }
         public int Status { get; set; }
+        public int RetVal { get; set; }
+
+        public Order()
+        {
+
+        }
     }
 }

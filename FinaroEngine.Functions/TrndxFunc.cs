@@ -110,29 +110,36 @@ namespace FinaroEngine.Functions
         public static async Task<IActionResult> InsertOrder([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "orders/new")]HttpRequest req, ILogger log)
         {
             log.LogInformation("Creating Order");
-            string response = new StreamReader(req.Body).ReadToEnd();            
             var neworder = new JsonSerializer().Deserialize<Order>(new JsonTextReader(new StreamReader(req.Body)));
             Options opts = GetOptions();
             Orders orders = new Orders(opts, neworder.UserId);
             try
             {
-                var retval = await orders.InsertOrder(neworder);
-                if (retval)
+                var retval = await orders.InsertOrder(neworder, Guid.NewGuid(), (int)Status.Filled);
+                if (retval.ReturnCode == 0)
                 {
-                    return new OkResult();
+                    return new OkObjectResult(retval.Balance);
+                }
+                else if (retval.ReturnCode == 1)
+                {
+                    return Utility.APIError("Uh-oh!", "Invalid number of shares specified");
+                }
+                else if (retval.ReturnCode == 2)
+                {
+                    return Utility.APIError("Uh-oh!", "Not enough funds to place this order");
+                }
+                else if (retval.ReturnCode == 3)
+                {
+                    return Utility.APIError("Uh-oh!", "You do no own enough shares of the this trend");
                 }
                 else
                 {
-                    // BAD CREDENTIALS
-                    return new ObjectResult(new { title = "Uh-oh!", message = "Error Creating Order" })
-                    {
-                        StatusCode = 500
-                    };
+                    return Utility.APIError("Uh-oh!", "Something Bad Happened! We're on it..");
                 }
             }
-            catch
+            catch(Exception e)
             {
-                return new BadRequestResult();
+                return Utility.APIError("Uh-oh!", "Something Bad Happened! We're on it..");
             }
         }
 
@@ -156,6 +163,7 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(priceVols.GetPriceVolJSON(name));
         }
 
+        #if !DEBUG
         [FunctionName("loadTrends")]
         public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
         {
@@ -169,6 +177,7 @@ namespace FinaroEngine.Functions
             //TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
             log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
         }
+        #endif
 
         //[FunctionName("clearTrends")]
         //public static void ClearTrends([TimerTrigger("0 0 */24 * * *")]TimerInfo myTimer, ILogger log)

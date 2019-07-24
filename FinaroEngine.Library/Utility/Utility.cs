@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
+
 
 namespace FinaroEngine.Library
 {
@@ -86,6 +89,14 @@ namespace FinaroEngine.Library
                 byte[] hash = sha.ComputeHash(textData);
                 return BitConverter.ToString(hash).Replace("-", String.Empty);
             }
+        }
+
+        public static ObjectResult APIError(string errTtl, string errMsg)
+        {     
+            return new ObjectResult(new { title = errTtl, message = errMsg })
+            {
+                StatusCode = 500
+            };
         }
     }
 }

@@ -21,23 +21,65 @@ namespace FinaroEngine.Library
             this.userId = userId;
         }
 
-        public async Task<bool> InsertOrder(Order newOrder)
+        public Orders(Options opts, int userId, int entityId)
+            : base(opts)
+        {
+
+        }
+
+        public async Task<(int ReturnCode, decimal? Balance)> InsertOrder(Order newOrder, Guid orderId, int status)
         {
             var dt = await DBUtility.GetDataTableAsync(opts.ConnectionString, "spSelectUserBalance", new List<SqlParameter> { new SqlParameter("@USERID", this.userId) });
             var balance = Convert.ToDecimal(dt.Rows[0][0]);
+            dt = await DBUtility.GetDataTableAsync(opts.ConnectionString, "spSelectUserShares", new List<SqlParameter> { new SqlParameter("@USERID", this.userId), new SqlParameter("@TRENDNAME", newOrder.TrendName) });
+            var totalTrendShares = Convert.ToDecimal(dt.Rows[0][0]);
+
             decimal amount = newOrder.Price * newOrder.Quantity;
             decimal newBalance = (newOrder.TradeTypeId == 1) ? balance - amount : balance + amount;
+            decimal newShareQuantity = 0;
+
+            //// IM TRYING TO BUY/SELL ZERO SHARES
+            if (newOrder.Quantity <= 0) return (1,null);
+
+            //// IM TRYING TO BUY STUFF
+            if (newOrder.TradeTypeId == 1)
+            {
+                // I DONT HAVE ENOUGH FUNDS TO BUY SHARES
+                if (newBalance < 0)
+                    return (2,null);
+                // I DO HAVE ENOUGH FUNDS TO BUY SHARES
+                else
+                {
+                    newShareQuantity = totalTrendShares + newOrder.Quantity;
+                }
+            }
+
+            //// IM TRYING TO SELL STUFF
+            if (newOrder.TradeTypeId == 2)
+            {
+                // I DONT HAVE ANY OR ENOUGH SHARES THAT IM TRYING TO SELL
+                if (totalTrendShares < newOrder.Quantity)
+                    return (3,null);
+                // I DO HAVE ENOUGH SHARES TO SELL
+                else
+                    newShareQuantity = totalTrendShares - newOrder.Quantity;
+            }
+
             List<SqlParameter> parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("@ORDERID", newOrder.OrderId));
+            parameters.Add(new SqlParameter("@ORDERID", orderId));
             parameters.Add(new SqlParameter("@USERID", newOrder.UserId));
             parameters.Add(new SqlParameter("@TRENDID", newOrder.TrendId));
+            parameters.Add(new SqlParameter("@TRENDNAME", newOrder.TrendName));
             parameters.Add(new SqlParameter("@TRADETYPEID", newOrder.TradeTypeId));
             parameters.Add(new SqlParameter("@ACTIVITYID", newOrder.TradeTypeId));
+            parameters.Add(new SqlParameter("@PRICE", newOrder.Price));
             parameters.Add(new SqlParameter("@QUANTITY", newOrder.Quantity));
             parameters.Add(new SqlParameter("@TOTALAMOUNT", amount));
             parameters.Add(new SqlParameter("@NEWBALANCE", newBalance));
-            await DBUtility.ExecuteQueryAsync(opts.ConnectionString, "spInsertOrder", null);
-            return true;
+            parameters.Add(new SqlParameter("@STATUS", status));
+            parameters.Add(new SqlParameter("@NEWQUANTITY", newShareQuantity));
+            await DBUtility.ExecuteQueryAsync(opts.ConnectionString, "spInsertOrder", parameters);
+            return (0,newBalance);
         }
 
         public MarketOrders AddNewOrder(Order newOrder, IContractCall contract)
@@ -117,7 +159,7 @@ namespace FinaroEngine.Library
                 order.TradeTypeId = Convert.ToInt32(dr["TradeTypeId"]);
                 order.Price = Convert.ToDecimal(dr["Price"]);
                 order.Date = Convert.ToDateTime(dr["Date"]);
-                order.Quantity = Convert.ToInt32(dr["Quantity"]);
+                order.Quantity = Convert.ToDecimal(dr["Quantity"]);
                 order.Status = Convert.ToInt32(dr["Status"]);
                 orders.Add(order);
             }
