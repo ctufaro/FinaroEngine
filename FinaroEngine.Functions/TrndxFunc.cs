@@ -26,6 +26,14 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(trends.GetTrendsJSON(filterId));
         }
 
+        [FunctionName("getUserTrendShares")]
+        public static async Task<IActionResult> GetUserTrendShares([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trends/user/count/{userId}/{trendName}")]HttpRequest req, ILogger log, int userId, string trendName)
+        {
+            log.LogInformation("Getting User Trend Shares");
+            Trends trends = new Trends(GetOptions());
+            return new OkObjectResult(await trends.GetUserTrendShares(userId, trendName));
+        }
+
         [FunctionName("userSignup")]
         public static async Task<IActionResult> SignUpUser([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "signup/user")]HttpRequest req, ILogger log)
         {

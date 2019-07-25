@@ -20,10 +20,22 @@ namespace FinaroEngine.Library
 
         public List<Trend> GetTrends(int filter)
         {
+            //STUPID FILTER PARAMETER
             List<SqlParameter> paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter("@USERENTRY", filter));
-            var dt = DBUtility.GetDataTable(opts.ConnectionString, "spSelectTrends", paras);
             List<Trend> trends = new List<Trend>();
+            DataTable dt = null;
+
+            if(filter == 0)
+            { 
+                paras.Add(new SqlParameter("@USERENTRY", filter));
+                dt = DBUtility.GetDataTable(opts.ConnectionString, "spSelectTrends", paras);
+            }
+            else
+            {
+                paras.Add(new SqlParameter("@USERID", filter));
+                dt = DBUtility.GetDataTable(opts.ConnectionString, "spSelectUserBoughtTrends", paras);
+            }
+            
             foreach (DataRow dr in dt.Rows)
             {
                 decimal price = Convert.ToDecimal(dr["Price"]);
@@ -54,6 +66,13 @@ namespace FinaroEngine.Library
             paras.Add(new SqlParameter("@USERID", userId));
             paras.Add(new SqlParameter("@NAME", trendName));
             await DBUtility.ExecuteQueryAsync(opts.ConnectionString, "spInsertUserTrend", paras);      
+        }
+
+        public async Task<decimal> GetUserTrendShares(int userId, string trendName)
+        {
+            DataTable dt = await DBUtility.GetDataTableAsync(opts.ConnectionString, "spSelectUserShares", 
+                new List<SqlParameter> { new SqlParameter("@USERID", userId), new SqlParameter("@TRENDNAME", trendName) });
+            return Convert.ToDecimal(dt.Rows[0][0]);
         }
 
         public string GetTrendsJSON(int filter)
