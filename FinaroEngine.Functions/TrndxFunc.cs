@@ -217,6 +217,14 @@ namespace FinaroEngine.Functions
             log.LogInformation($"C# ClearTrends HTTP trigger function executed at: {DateTime.Now}");
         }
 
+        [FunctionName("clearOrdersDemand")]
+        public static void ClearOrdersManually([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "utils/orders/clear")]HttpRequest req, ILogger log)
+        {
+            string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
+            TrendLibrary.ClearOrders(sqlConnectionString);
+            log.LogInformation($"C# ClearOrders HTTP trigger function executed at: {DateTime.Now}");
+        }
+
         public static Options GetOptions()
         {
             Options opts = new Options();

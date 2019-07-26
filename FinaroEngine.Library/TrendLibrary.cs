@@ -36,6 +36,8 @@ namespace FinaroEngine.Library
             IRestResponse response = client.Execute(request);
             var content = response.Content; // raw content as string
             dynamic stuff = JsonConvert.DeserializeObject(content);
+            DateTime startTime = Convert.ToDateTime(DBUtility.ExecuteScalar(sqlConnectionString, "SELECT GETDATE()"));
+            bool updatesMade = false;
 
             foreach (JObject item in stuff)
             {
@@ -53,7 +55,7 @@ namespace FinaroEngine.Library
                         trendName = trend["name"].ToString();
                         var tweets = GetTweetsAsync(trendName, 10, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
 
-                        if (tweets==null)
+                        if (tweets == null)
                             continue;
 
                         score = GetVaderSentAvgAsync(tweets.Result).Result;
@@ -64,11 +66,28 @@ namespace FinaroEngine.Library
                         sparams.Add(new SqlParameter("@AVGSENTIMENT", score));
                         sparams.Add(new SqlParameter("@USERENTRY", false));
                         DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sparams);
+                        updatesMade = true;
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         LogError($"Trend:{trendName} Score:{score} {e.ToString()}");
                     }
+                }
+            }
+
+            // UPDATES WERE MADE LETS ZERO OUT ORPHANED TRENDS
+            if (updatesMade)            {
+                
+                var dt = DBUtility.GetDataTable(sqlConnectionString, "spSelectOrphanedTrends", new List<SqlParameter> { new SqlParameter("@LOADTIME", startTime) });                
+                foreach(DataRow dr in dt.Rows)
+                {
+                    List<SqlParameter> sqlp = new List<SqlParameter>();
+                    sqlp.Add(new SqlParameter("@NAME", dr["Name"].ToString()));
+                    sqlp.Add(new SqlParameter("@URL", dr["URL"].ToString()));
+                    sqlp.Add(new SqlParameter("@TWEETVOLUME", Convert.ToInt32(0)));
+                    sqlp.Add(new SqlParameter("@AVGSENTIMENT", Convert.ToInt32(0)));
+                    sqlp.Add(new SqlParameter("@USERENTRY", false));
+                    DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sqlp);
                 }
             }
         }
@@ -76,7 +95,6 @@ namespace FinaroEngine.Library
         public static void LoadUserTrends(string sqlConnectionString, string twitterConsumerKey, string twitterConsumerSecret, string twitterAccessToken, string twitterAccessTokenSecret, Action<string> LogError)
         {
             //sql statement here to get user trend names
-            string sql = "SELECT TrendName FROM USER_TRENDS";
             var dt = DBUtility.GetDataTable(sqlConnectionString, "spSelectUserTrends", null);
             foreach(DataRow dr in dt.Rows)
             {
@@ -123,6 +141,12 @@ namespace FinaroEngine.Library
         {
             List<SqlParameter> dummy = new List<SqlParameter> { new SqlParameter("@DUMMY", -1) };
             FinaroEngine.Library.DBUtility.ExecuteQuery(sqlConnectionString, "spClearTrends", dummy);
+        }
+
+        public static void ClearOrders(string sqlConnectionString)
+        {
+            List<SqlParameter> dummy = new List<SqlParameter> { new SqlParameter("@DUMMY", -1) };
+            FinaroEngine.Library.DBUtility.ExecuteQuery(sqlConnectionString, "spClearOrders", dummy);
         }
 
         public static async Task<List<string>> GetTweetsAsync(string tweet, int count, string twitterConsumerKey, string twitterConsumerSecret, string twitterAccessToken, string twitterAccessTokenSecret)
