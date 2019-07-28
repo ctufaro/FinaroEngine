@@ -77,9 +77,10 @@ namespace FinaroEngine.Library
             }
 
             // UPDATES WERE MADE LETS ZERO OUT ORPHANED TRENDS
-            if (updatesMade)            {
+            if (updatesMade)
+            {
                 
-                var dt = DBUtility.GetDataTable(sqlConnectionString, "spSelectOrphanedTrends", new List<SqlParameter> { new SqlParameter("@LOADTIME", startTime) });                
+                var dt = DBUtility.GetDataTable(sqlConnectionString, "spSelectOrphanedTrends", new List<SqlParameter> { new SqlParameter("@LOADTIME", startTime.AddMinutes(-1)) });                
                 foreach(DataRow dr in dt.Rows)
                 {
                     List<SqlParameter> sqlp = new List<SqlParameter>();
@@ -88,7 +89,7 @@ namespace FinaroEngine.Library
                     sqlp.Add(new SqlParameter("@TWEETVOLUME", Convert.ToInt32(0)));
                     sqlp.Add(new SqlParameter("@AVGSENTIMENT", Convert.ToInt32(0)));
                     sqlp.Add(new SqlParameter("@USERENTRY", true));
-                    sqlp.Add(new SqlParameter("@DATE", startTime));
+                    sqlp.Add(new SqlParameter("@DATE", startTime.AddMinutes(1)));
                     DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sqlp);
                 }
             }
