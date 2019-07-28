@@ -36,7 +36,8 @@ namespace FinaroEngine.Library
             IRestResponse response = client.Execute(request);
             var content = response.Content; // raw content as string
             dynamic stuff = JsonConvert.DeserializeObject(content);
-            DateTime startTime = Convert.ToDateTime(DBUtility.ExecuteScalar(sqlConnectionString, "SELECT GETDATE()"));
+            string startTime = DBUtility.ExecuteScalar(sqlConnectionString, "SELECT FORMAT(GETDATE() , 'M/d/yy HH:mm')").ToString();
+ 
             bool updatesMade = false;
 
             foreach (JObject item in stuff)
@@ -80,7 +81,7 @@ namespace FinaroEngine.Library
             if (updatesMade)
             {
                 
-                var dt = DBUtility.GetDataTable(sqlConnectionString, "spSelectOrphanedTrends", new List<SqlParameter> { new SqlParameter("@LOADTIME", startTime.AddMinutes(-1)) });                
+                var dt = DBUtility.GetDataTable(sqlConnectionString, "spSelectOrphanedTrends", new List<SqlParameter> { new SqlParameter("@LOADTIME", startTime) });                
                 foreach(DataRow dr in dt.Rows)
                 {
                     List<SqlParameter> sqlp = new List<SqlParameter>();
@@ -89,7 +90,7 @@ namespace FinaroEngine.Library
                     sqlp.Add(new SqlParameter("@TWEETVOLUME", Convert.ToInt32(0)));
                     sqlp.Add(new SqlParameter("@AVGSENTIMENT", Convert.ToInt32(0)));
                     sqlp.Add(new SqlParameter("@USERENTRY", true));
-                    sqlp.Add(new SqlParameter("@DATE", startTime.AddMinutes(1)));
+                    sqlp.Add(new SqlParameter("@DATE", startTime));
                     DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sqlp);
                 }
             }
