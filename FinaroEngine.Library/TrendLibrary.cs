@@ -65,6 +65,7 @@ namespace FinaroEngine.Library
                         sparams.Add(new SqlParameter("@TWEETVOLUME", volume));
                         sparams.Add(new SqlParameter("@AVGSENTIMENT", score));
                         sparams.Add(new SqlParameter("@USERENTRY", false));
+                        sparams.Add(new SqlParameter("@DATE", startTime));
                         DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sparams);
                         updatesMade = true;
                     }
@@ -87,6 +88,7 @@ namespace FinaroEngine.Library
                     sqlp.Add(new SqlParameter("@TWEETVOLUME", Convert.ToInt32(0)));
                     sqlp.Add(new SqlParameter("@AVGSENTIMENT", Convert.ToInt32(0)));
                     sqlp.Add(new SqlParameter("@USERENTRY", true));
+                    sqlp.Add(new SqlParameter("@DATE", startTime));
                     DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sqlp);
                 }
             }
