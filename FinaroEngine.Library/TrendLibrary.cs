@@ -86,7 +86,7 @@ namespace FinaroEngine.Library
                     sqlp.Add(new SqlParameter("@URL", dr["URL"].ToString()));
                     sqlp.Add(new SqlParameter("@TWEETVOLUME", Convert.ToInt32(0)));
                     sqlp.Add(new SqlParameter("@AVGSENTIMENT", Convert.ToInt32(0)));
-                    sqlp.Add(new SqlParameter("@USERENTRY", false));
+                    sqlp.Add(new SqlParameter("@USERENTRY", true));
                     DBUtility.ExecuteQuery(sqlConnectionString, "spInsertTrend", sqlp);
                 }
             }
