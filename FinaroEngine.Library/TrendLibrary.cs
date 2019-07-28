@@ -55,7 +55,7 @@ namespace FinaroEngine.Library
                         trendName = trend["name"].ToString();
                         var tweets = GetTweetsAsync(trendName, 10, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret);
 
-                        if (tweets == null)
+                        if (tweets == null || volume == 0)
                             continue;
 
                         score = GetVaderSentAvgAsync(tweets.Result).Result;
