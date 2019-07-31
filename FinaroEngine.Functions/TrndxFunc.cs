@@ -140,6 +140,10 @@ namespace FinaroEngine.Functions
                 {
                     return Utility.APIError("Uh-oh!", "You do no own enough shares of the this trend");
                 }
+                else if (retval.ReturnCode == 4)
+                {
+                    return Utility.APIError("Uh-oh!", "You cannot buy/sell trends with a price of zero. Trend may no longer be trending.");
+                }
                 else
                 {
                     return Utility.APIError("Uh-oh!", "Something Bad Happened! We're on it..");

@@ -41,6 +41,9 @@ namespace FinaroEngine.Library
             //// IM TRYING TO BUY/SELL ZERO SHARES
             if (newOrder.Quantity <= 0) return (1,null);
 
+            //// IM TRYING TO BUY/SELL TRENDS WITH A PRICE OF ZERO
+            if (newOrder.Price == 0) return (4, null);
+
             //// IM TRYING TO BUY STUFF
             if (newOrder.TradeTypeId == 1)
             {
