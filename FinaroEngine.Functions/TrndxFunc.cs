@@ -154,8 +154,7 @@ namespace FinaroEngine.Functions
                 return Utility.APIError("Uh-oh!", "Something Bad Happened! We're on it..");
             }
         }
-
-
+        
         [FunctionName("getTweetVol")]
         public static async Task<IActionResult> GetTweetVol([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tweets/{name}")]HttpRequest req, ILogger log, string name)
         {
@@ -164,8 +163,7 @@ namespace FinaroEngine.Functions
             name = HttpUtility.HtmlDecode(name);
             return new OkObjectResult(tweetVols.GetTweetVolJSON(name));
         }
-
-
+        
         [FunctionName("getPriceVol")]
         public static async Task<IActionResult> GetPriceVol([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "pricevol/{name}")]HttpRequest req, ILogger log, string name)
         {
@@ -175,7 +173,23 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(priceVols.GetPriceVolJSON(name));
         }
 
-        #if !DEBUG
+        [FunctionName("sendEmail")]
+        public static OkObjectResult SendEmail([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "email")]HttpRequest req, ILogger log)
+        {
+            log.LogInformation("Sending Email");
+            string res = new StreamReader(req.Body).ReadToEnd();
+            var response = JsonConvert.DeserializeAnonymousType(res, new { Email = "", Subject = "", Message = "" });
+
+            if (string.IsNullOrEmpty(response.Email))
+                return new OkObjectResult("Empty Email Address");
+
+            Task<string> result = Email.SendAsync(Environment.GetEnvironmentVariable("EmailAPIKey"),
+                                                Environment.GetEnvironmentVariable("EmailRecipients"), response.Email, response.Subject, response.Message);
+            result.Wait();
+            return new OkObjectResult(result.Result);
+        }
+
+#if !DEBUG
         [FunctionName("loadTrends")]
         public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
         {
@@ -189,7 +203,7 @@ namespace FinaroEngine.Functions
             //TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
             log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
         }
-        #endif
+#endif
 
         //[FunctionName("clearTrends")]
         //public static void ClearTrends([TimerTrigger("0 0 */24 * * *")]TimerInfo myTimer, ILogger log)
