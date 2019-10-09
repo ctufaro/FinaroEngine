@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using FinaroEngine.Library;
 using System.Web;
+using System.Net;
 
 namespace FinaroEngine.Functions
 {
@@ -173,6 +174,40 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(priceVols.GetPriceVolJSON(name));
         }
 
+        [FunctionName("getCoinListData")]
+        public static async Task<IActionResult> GetCoinListData([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "coinlistdata")]HttpRequest req, ILogger log)
+        {
+            log.LogInformation("Getting Coin Listing Data");
+            bool useProduction = bool.Parse(Environment.GetEnvironmentVariable("CoinProduction"));
+            var creds = GetCreds(useProduction);
+            var URL = new UriBuilder($"https://{creds.url}/v1/cryptocurrency/quotes/latest");
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            queryString["slug"] = "bitcoin,ethereum,electroneum,tomochain";
+            URL.Query = queryString.ToString();
+            var client = new WebClient();
+            client.Headers.Add("X-CMC_PRO_API_KEY", creds.key);
+            client.Headers.Add("Accepts", "application/json");
+            var result = client.DownloadString(URL.ToString());
+            return new OkObjectResult(result);
+        }
+
+        [FunctionName("getCoinMarketData")]
+        public static async Task<IActionResult> GetCoinMarketData([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "coinmarketdata")]HttpRequest req, ILogger log)
+        {
+            log.LogInformation("Getting Coin Market Data");
+            bool useProduction = bool.Parse(Environment.GetEnvironmentVariable("CoinProduction"));
+            var creds = GetCreds(useProduction);
+            var URL = new UriBuilder($"https://{creds.url}/v1/global-metrics/quotes/latest");
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            queryString["convert"] = "USD";
+            URL.Query = queryString.ToString();
+            var client = new WebClient();
+            client.Headers.Add("X-CMC_PRO_API_KEY", creds.key);
+            client.Headers.Add("Accepts", "application/json");
+            var result = client.DownloadString(URL.ToString());
+            return new OkObjectResult(result);
+        }
+
         [FunctionName("sendEmail")]
         public static OkObjectResult SendEmail([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "email")]HttpRequest req, ILogger log)
         {
@@ -189,21 +224,19 @@ namespace FinaroEngine.Functions
             return new OkObjectResult(result.Result);
         }
 
-#if !DEBUG
-        [FunctionName("loadTrends")]
-        public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
-        {
-            string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
-            string twitterConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
-            string twitterConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
-            string twitterAccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
-            string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
+        //[FunctionName("loadTrends")]
+        //public static void LoadTrends([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, ILogger log)
+        //{
+        //    string sqlConnectionString = Environment.GetEnvironmentVariable("SQLConnectionString");
+        //    string twitterConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
+        //    string twitterConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
+        //    string twitterAccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
+        //    string twitterAccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
 
-            TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
-            //TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
-            log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
-        }
-#endif
+        //    TrendLibrary.LoadTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
+        //    //TrendLibrary.LoadUserTrends(sqlConnectionString, twitterConsumerKey, twitterConsumerSecret, twitterAccessToken, twitterAccessTokenSecret, err => log.LogInformation(err));
+        //    log.LogInformation($"C# LoadTrends Timer trigger function executed at: {DateTime.Now}");
+        //}
 
         //[FunctionName("clearTrends")]
         //public static void ClearTrends([TimerTrigger("0 0 */24 * * *")]TimerInfo myTimer, ILogger log)
@@ -253,6 +286,18 @@ namespace FinaroEngine.Functions
             opts.SigningKey = Environment.GetEnvironmentVariable("ContractSigningKey");
             opts.GasAmount = Convert.ToInt32(Environment.GetEnvironmentVariable("GasAmount"));
             return opts;
+        }
+
+        public static(string url, string key) GetCreds(bool useProduction)
+        {
+            if (useProduction)
+            {
+                return (Environment.GetEnvironmentVariable("ProductionAPI"), Environment.GetEnvironmentVariable("ProductionKey"));
+            }
+            else
+            {
+                return (Environment.GetEnvironmentVariable("SandboxAPI"), Environment.GetEnvironmentVariable("SandboxKey"));
+            }
         }
     }
 }

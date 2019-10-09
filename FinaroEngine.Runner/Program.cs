@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Web;
 using System.Numerics;
 using System.Threading.Tasks;
 using Nethereum.Contracts;
@@ -10,7 +12,7 @@ namespace FinaroEngine.Runner
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main2(string[] args)
         {
             //string constring = @"Data Source=CHRIS\SQLEXPRESS;Initial Catalog=FinaroDB;persist security info=True; Integrated Security=SSPI;";
             //string constring = @"Data Source=VM-DEV-SQL\sql2014;Initial Catalog=Sandbox;persist security info=True; Integrated Security=SSPI;";
@@ -84,6 +86,64 @@ namespace FinaroEngine.Runner
                 Console.WriteLine("Error: {0}", e.Message);
             }
             */
+        }
+
+        private static string API_KEY = "ad6e90dc-6a09-4285-8625-2ce6847c8847";
+        private static string SANDBOX_KEY = "b7e4ecae-873a-4dd9-8a94-de3291b1193b";
+
+        static void Main(string[] args)
+        {
+            try
+            {
+                var creds = GetCreds(false);
+                Console.WriteLine(MarketCall(creds.url,creds.key));
+            }
+            catch (WebException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        static string CoinCalls(string url, string key)
+        {
+            var URL = new UriBuilder($"https://{url}/v1/cryptocurrency/quotes/latest");
+
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            queryString["slug"] = "bitcoin,ethereum,electroneum,tomochain";
+
+            URL.Query = queryString.ToString();
+
+            var client = new WebClient();
+            client.Headers.Add("X-CMC_PRO_API_KEY", key);
+            client.Headers.Add("Accepts", "application/json");
+            return client.DownloadString(URL.ToString());
+        }
+
+        static string MarketCall(string url, string key)
+        {
+            var URL = new UriBuilder($"https://{url}/v1/global-metrics/quotes/latest");
+
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            queryString["convert"] = "USD";
+
+            URL.Query = queryString.ToString();
+
+            var client = new WebClient();
+            client.Headers.Add("X-CMC_PRO_API_KEY", SANDBOX_KEY);
+            client.Headers.Add("Accepts", "application/json");
+            return client.DownloadString(URL.ToString());
+        }
+
+        static (string url, string key) GetCreds(bool useProduction)
+        {
+            if (useProduction)
+            {
+                return ("pro-api.coinmarketcap.com", "ad6e90dc-6a09-4285-8625-2ce6847c8847");
+            }
+            else
+            {
+                return ("sandbox-api.coinmarketcap.com", "b7e4ecae-873a-4dd9-8a94-de3291b1193b");
+            }
         }
     }
 }
